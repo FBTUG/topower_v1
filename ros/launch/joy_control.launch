@@ -1,0 +1,13 @@
+<launch>
+    <node name="joy_node" pkg="joy" type="joy_node"/>
+    <node name="joy_mapper_node" pkg="topower_v1" type="joy_mapper_node.py"/>
+    <node name="serial_node" pkg="rosserial_python" type="serial_node.py">
+        <param name="port" value="/dev/ttyACM0" />
+    </node>
+    <node name="cam_capture_node" pkg="topower_v1" type="cam_capture_node.py">
+        <param name="camID" value="0" />
+    </node>
+    <node name="car_control_node" pkg="topower_v1" type="car_control_node.py">
+        <param name="turnRatio" value="1.5" />
+    </node>
+</launch>
