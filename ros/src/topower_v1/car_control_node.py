@@ -17,7 +17,6 @@ class CarControl():
 
         self.sub = rospy.Subscriber("cmd_vel", Twist, self.VelocityCallback)
         self.wheelDrivePub = rospy.Publisher("wheel_drive",WheelDrive,queue_size=1)
-        self.panTiltPub = rospy.Publisher("pan_tilt_servo",PanTiltServo,queue_size=1)
 
     def VelocityCallback(self,msg):
         #twist.linear: x->forward, y->left, z->up
@@ -37,9 +36,9 @@ class CarControl():
             return 0
         else:
             if v > 0:
-                return math.floor(absV*(self.maxPWM-self.minPWM)+self.minPWM)
+                return int(absV*(self.maxPWM-self.minPWM)+self.minPWM)
             else:
-                return -math.floor(absV*(self.maxPWM-self.minPWM)+self.minPWM)
+                return -int(absV*(self.maxPWM-self.minPWM)+self.minPWM)
 
     def UpdateVelocity(self):
         leftSpeed = self.speed*self.vnorm*(1-self.turnSpeed*0.5*self.turnRatio)
