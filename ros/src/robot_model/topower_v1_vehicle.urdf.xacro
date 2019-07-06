@@ -1,0 +1,107 @@
+<?xml version="1.0"?>
+<robot name="topower_v1" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <xacro:property name="body_x" value="0.24"/>
+    <xacro:property name="body_y" value="0.2"/>
+    <xacro:property name="body_z" value="0.02"/>
+    <xacro:property name="body_mass" value="0.5"/>
+
+    <xacro:property name="platform_x" value="0.1"/>
+    <xacro:property name="platform_y" value="0.2"/>
+    <xacro:property name="platform_z" value="0.065"/>
+    <xacro:property name="platform_mass" value="0.2"/>
+
+    <xacro:property name="ctl_box_x" value="0.1"/>
+    <xacro:property name="ctl_box_y" value="0.11"/>
+    <xacro:property name="ctl_box_z" value="0.07"/>
+    <xacro:property name="ctl_box_mass" value="0.2"/>
+
+    <xacro:property name="passive_wheel_radius" value="0.01"/>
+    <xacro:property name="passive_wheel_mass" value="0.02"/>
+
+    <xacro:property name="wheel_radius" value="0.03"/>
+    <xacro:property name="wheel_height" value="0.025"/>
+    <xacro:property name="wheel_mass" value="0.05"/>
+    <xacro:property name="wheel_offset_x" value="0.065"/>
+    
+    <!-- ==================body======================= -->
+    <link name="vehicle_base" />
+    <xacro:box_link name="vehicle_body" size_x="${body_x}" size_y="${body_y}" size_z="${body_z}" mass="${body_mass}" material="white"/>
+    <xacro:box_link name="vehicle_platform" size_x="${platform_x}" size_y="${platform_y}" size_z="${platform_z}" mass="${platform_mass}" material="grey"/>
+    <xacro:box_link name="vehicle_ctl_box" size_x="${ctl_box_x}" size_y="${ctl_box_y}" size_z="${ctl_box_z}" mass="${ctl_box_mass}" material="black"/>
+
+    <joint name="joint_base_to_body" type="fixed">
+        <parent link="vehicle_base"/>
+        <child link="vehicle_body"/>
+        <origin xyz="0 0 ${wheel_radius}" rpy="0 0 0"/>
+    </joint>
+
+    <joint name="joint_body_to_platform" type="fixed">
+        <parent link="vehicle_body"/>
+        <child link="vehicle_platform"/>
+        <origin xyz="${0.5*(body_x-platform_x)} 0 ${0.5*(body_z+platform_z)}" rpy="0 0 0"/>
+    </joint>
+
+    <joint name="joint_platform_to_ctl_box" type="fixed">
+        <parent link="vehicle_platform"/>
+        <child link="vehicle_ctl_box"/>
+        <origin xyz="0 ${0.5*(platform_y-ctl_box_y)} ${0.5*(platform_z+ctl_box_z)}" rpy="0 0 0"/>
+    </joint>
+
+    <!-- ==================passive wheel======================= -->
+    <xacro:sphere_link name="passive_wheel_l" radius="${passive_wheel_radius}" mass="${passive_wheel_mass}" material="white"/>
+    <xacro:sphere_link name="passive_wheel_r" radius="${passive_wheel_radius}" mass="${passive_wheel_mass}" material="white"/>
+
+    <joint name="joint_passive_wheel_l" type="fixed">
+        <parent link="vehicle_body"/>
+        <child link="passive_wheel_l"/>
+        <origin xyz="${-0.5*body_x+passive_wheel_radius} ${0.5*body_y-passive_wheel_radius} ${-0.5*body_z-passive_wheel_radius}" rpy="0 0 0"/>
+    </joint>
+
+    <joint name="joint_passive_wheel_r" type="fixed">
+        <parent link="vehicle_body"/>
+        <child link="passive_wheel_r"/>
+        <origin xyz="${-0.5*body_x+passive_wheel_radius} ${-0.5*body_y+passive_wheel_radius} ${-0.5*body_z-passive_wheel_radius}" rpy="0 0 0"/>
+    </joint>
+
+    <!-- ==================wheel======================= -->
+    <xacro:cylinder_link name="wheel_l" radius="${wheel_radius}" height="${wheel_height}" mass="${wheel_mass}" material="black"/>
+    <xacro:cylinder_link name="wheel_r" radius="${wheel_radius}" height="${wheel_height}" mass="${wheel_mass}" material="black"/>
+    
+    <joint name="joint_wheel_l" type="continuous">
+        <parent link="vehicle_body"/>
+        <child link="wheel_l"/>
+        <axis xyz="0 0 1"/>
+        <origin xyz="${wheel_offset_x} ${0.5*(body_y+wheel_height)} 0" rpy="${PI*0.5} 0 0"/>
+    </joint>
+
+    <joint name="joint_wheel_r" type="continuous">
+        <parent link="vehicle_body"/>
+        <child link="wheel_r"/>
+        <axis xyz="0 0 1"/>
+        <origin xyz="${wheel_offset_x} ${-0.5*(body_y+wheel_height)} 0" rpy="${PI*0.5} 0 0"/>
+    </joint>
+
+    <!-- ======================transitions=============================-->
+    <transmission name="tran_wheel_l">
+        <type>transmission_interface/SimpleTransmission</type>
+        <joint name="joint_wheel_l">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        </joint>
+        <actuator name="motor_wheel_l">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+    </transmission>
+
+    <transmission name="tran_wheel_r">
+        <type>transmission_interface/SimpleTransmission</type>
+        <joint name="joint_wheel_r">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        </joint>
+        <actuator name="motor_wheel_r">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+    </transmission>
+</robot>

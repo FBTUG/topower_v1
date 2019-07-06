@@ -11,6 +11,10 @@ class JoyMapper():
         self.panOffset = 0
         self.tiltOffset = 0
         self.updateRate = rospy.get_param("~updateRate",30)
+        self.panMin = rospy.get_param("~panMin",0)
+        self.panMax = rospy.get_param("~panMax",255)
+        self.tiltMin = rospy.get_param("~tiltMin",0)
+        self.tiltMax = rospy.get_param("~tiltMax",255)
         self.sub = rospy.Subscriber("joy", Joy, self.JoyCallback)
         self.velPub = rospy.Publisher("cmd_vel",Twist,queue_size=1)
         self.panTiltPub = rospy.Publisher("pan_tilt_servo",PanTiltServo,queue_size=1)
@@ -31,14 +35,14 @@ class JoyMapper():
     def UpdatePanTilt(self):
         self.curPan += self.panOffset
         self.curTilt += self.tiltOffset
-        if self.curPan < 0:
-            self.curPan = 0
-        elif self.curPan > 255:
-            self.curPan = 255
-        if self.curTilt < 0:
-            self.curTilt = 0
-        elif self.curTilt > 255:
-            self.curTilt = 255
+        if self.curPan < self.panMin:
+            self.curPan = self.panMin
+        elif self.curPan > self.panMax:
+            self.curPan = self.panMax
+        if self.curTilt < self.tiltMin:
+            self.curTilt = self.tiltMin
+        elif self.curTilt > self.tiltMax:
+            self.curTilt = self.tiltMax
         self.panTiltPub.publish(panPos=self.curPan,tiltPos=self.curTilt)
 
     def Run(self):

@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+<robot name="topower_v1" xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <xacro:property name="PI" value="3.1415926"/>
+    <xacro:macro name="visualAsCollision" params="*origin *geometry *material">
+        <collision>
+            <xacro:insert_block name="origin" />
+            <xacro:insert_block name="geometry" />
+        </collision>
+
+        <visual>
+            <xacro:insert_block name="origin" />
+            <xacro:insert_block name="geometry" />
+            <xacro:insert_block name="material" />
+        </visual>
+    </xacro:macro>
+
+    <xacro:macro name="box_link" params="name size_x size_y size_z mass material">
+        <link name="${name}">
+            <xacro:visualAsCollision>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <box size="${size_x} ${size_y} ${size_z}"/>
+                </geometry>
+                <material name="${material}"/>
+            </xacro:visualAsCollision>
+            
+            <inertial>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <mass value="${mass}"/>
+                <inertia
+                ixx="${mass / 12.0 * (size_y*size_y + size_z*size_z)}" ixy="0.0" ixz="0.0"
+                iyy="${mass / 12.0 * (size_z*size_z + size_x*size_x)}" iyz="0.0"
+                izz="${mass / 12.0 * (size_x*size_x + size_y*size_y)}"/>
+            </inertial>
+        </link>
+    </xacro:macro>
+
+    <xacro:macro name="sphere_link" params="name radius mass material">
+        <link name="${name}">
+            <xacro:visualAsCollision>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <sphere radius="${radius}"/>
+                </geometry>
+                <material name="${material}"/>
+            </xacro:visualAsCollision>
+            
+            <inertial>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <mass value="${mass}"/>
+                <inertia
+                ixx="${mass*2/5.0*radius*radius}" ixy="0.0" ixz="0.0"
+                iyy="${mass*2/5.0*radius*radius}" iyz="0.0"
+                izz="${mass*2/5.0*radius*radius}"/>
+            </inertial>
+        </link>
+    </xacro:macro>
+
+    <xacro:macro name="cylinder_link" params="name radius height mass material">
+        <link name="${name}">
+            <xacro:visualAsCollision>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <cylinder radius="${radius}" length="${height}"/>
+                </geometry>
+                <material name="${material}"/>
+            </xacro:visualAsCollision>
+
+            <inertial>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <mass value="${mass}"/>
+                <inertia
+                ixx="${mass/12.0*(3*radius*radius+height*height)}" ixy="0.0" ixz="0.0"
+                iyy="${mass/12.0*(3*radius*radius+height*height)}" iyz="0.0"
+                izz="${mass/2.0*(radius*radius)}"/>
+            </inertial>
+        </link>
+    </xacro:macro>
+</robot>

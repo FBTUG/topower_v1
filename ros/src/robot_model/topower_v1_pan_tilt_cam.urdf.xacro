@@ -1,0 +1,80 @@
+<?xml version="1.0"?>
+<robot name="topower_v1" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <xacro:property name="pan_box_x" value="0.055"/>
+    <xacro:property name="pan_box_y" value="0.045"/>
+    <xacro:property name="pan_box_z" value="0.035"/>
+    <xacro:property name="pan_box_mass" value="0.1"/>
+
+    <xacro:property name="tilt_base_x" value="0.055"/>
+    <xacro:property name="tilt_base_y" value="0.005"/>
+    <xacro:property name="tilt_base_z" value="0.045"/>
+    <xacro:property name="tilt_base_mass" value="0.05"/>
+
+    <xacro:property name="tilt_box_x" value="0.01"/>
+    <xacro:property name="tilt_box_y" value="0.045"/>
+    <xacro:property name="tilt_box_z" value="0.03"/>
+    <xacro:property name="tilt_box_mass" value="0.05"/>
+
+    <xacro:property name="cam_radius" value="0.01"/>
+    <xacro:property name="cam_height" value="0.01"/>
+    <xacro:property name="cam_mass" value="0.02"/>
+    
+    <!-- ==================body======================= -->
+    <link name="pan_tilt_base" />
+    <xacro:box_link name="pan_box" size_x="${pan_box_x}" size_y="${pan_box_y}" size_z="${pan_box_z}" mass="${pan_box_mass}" material="white"/>
+    <xacro:box_link name="tilt_base" size_x="${tilt_base_x}" size_y="${tilt_base_y}" size_z="${tilt_base_z}" mass="${tilt_base_mass}" material="white"/>
+    <xacro:box_link name="tilt_box" size_x="${tilt_box_x}" size_y="${tilt_box_y}" size_z="${tilt_box_z}" mass="${tilt_box_mass}" material="orange"/>
+    <xacro:cylinder_link name="cam" radius="${cam_radius}" height="${cam_height}" mass="${cam_mass}" material="orange"/>
+
+    <joint name="joint_cam_pan" type="revolute">
+        <parent link="pan_tilt_base"/>
+        <child link="pan_box"/>
+        <axis xyz="0 0 1"/>
+        <origin xyz="0 0 ${0.5*pan_box_z}" rpy="0 0 0"/>
+        <limit lower="${-2*PI/3}" upper="${2*PI/3}" effort="100" velocity="10" />
+    </joint>
+
+    <joint name="joint_pan_box_to_tilt_base" type="fixed">
+        <parent link="pan_box"/>
+        <child link="tilt_base"/>
+        <origin xyz="0 ${0.5*(pan_box_y-tilt_base_y)} ${0.5*(pan_box_z+tilt_base_z)}" rpy="0 0 0"/>
+    </joint>
+
+    <joint name="joint_cam_tilt" type="revolute">
+        <parent link="tilt_base"/>
+        <child link="tilt_box"/>
+        <axis xyz="0 1 0"/>
+        <origin xyz="${0.5*(tilt_base_x-tilt_box_x)} ${-0.5*(tilt_base_y+tilt_box_y)} 0}" rpy="0 0 0"/>
+        <limit lower="${-0.5*PI}" upper="${0.5*PI}" effort="30" velocity="3" />
+    </joint>
+
+    <joint name="joint_tilt_base_to_cam" type="fixed">
+        <parent link="tilt_box"/>
+        <child link="cam"/>
+        <origin xyz="${0.5*(tilt_box_x+cam_height)} 0 0" rpy="0 ${0.5*PI} 0"/>
+    </joint>
+
+    <!-- ======================transitions=============================-->
+    <transmission name="tran_cam_pan">
+        <type>transmission_interface/SimpleTransmission</type>
+        <joint name="joint_cam_pan">
+        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+        </joint>
+        <actuator name="motor_cam_pan">
+        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+    </transmission>
+
+    <transmission name="tran_cam_tilt">
+        <type>transmission_interface/SimpleTransmission</type>
+        <joint name="joint_cam_tilt">
+        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+        </joint>
+        <actuator name="motor_cam_tilt">
+        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+    </transmission>
+</robot>
