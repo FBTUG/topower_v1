@@ -5,14 +5,21 @@
   <xacro:include filename="$(find topower_v1)/src/robot_model/topower_v1_common.xacro" />
   <xacro:include filename="$(find topower_v1)/src/robot_model/topower_v1_vehicle.urdf.xacro" />
   <xacro:include filename="$(find topower_v1)/src/robot_model/topower_v1_pan_tilt_cam.urdf.xacro" />
+  <xacro:include filename="$(find topower_v1)/src/robot_model/topower_v1_arm.urdf.xacro" />
 
   <joint name="joint_cam_to_platform" type="fixed">
       <parent link="vehicle_platform"/>
       <child link="pan_tilt_base"/>
       <origin xyz="0 ${-0.5*(platform_y-pan_box_y)} ${0.5*platform_z}" rpy="0 0 0"/>
   </joint>
+
+  <joint name="joint_arm_to_body" type="fixed">
+      <parent link="vehicle_body"/>
+      <child link="arm_root"/>
+      <origin xyz="${-battery_box_radius} 0 0" rpy="0 0 0"/>
+  </joint>
   <!--
-  <xacro:include filename="$(find topower_v1)/src/robot_model/topower_v1_arm.urdf.xacro" />
+  
   <xacro:include filename="$(find topower_v1)/src/robot_model/topower_v1.gazebo" />
 
   <joint name="joint_vehicle_to_arm" type="fixed">

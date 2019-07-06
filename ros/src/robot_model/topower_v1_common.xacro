@@ -14,10 +14,16 @@
         </visual>
     </xacro:macro>
 
-    <xacro:macro name="box_link" params="name size_x size_y size_z mass material">
+    <xacro:macro name="box_link" params="name size_x size_y size_z mass material ori:='' ">
         <link name="${name}">
             <xacro:visualAsCollision>
-                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <xacro:if value="${ori == '' }">
+                    <origin xyz="0 0 0" rpy="0 0 0"/>
+                </xacro:if>
+                <xacro:unless value="${ori == '' }">
+                    <origin xyz="${ori}" rpy="0 0 0"/>
+                </xacro:unless>
+                
                 <geometry>
                     <box size="${size_x} ${size_y} ${size_z}"/>
                 </geometry>
