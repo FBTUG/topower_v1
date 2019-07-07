@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<robot name="topower_v1" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:include filename="$(find topower_v1)/robot_model/materials.xacro" />
+  <xacro:include filename="$(find topower_v1)/robot_model/topower_v1_common.xacro" />
+  <xacro:include filename="$(find topower_v1)/robot_model/topower_v1_vehicle.urdf.xacro" />
+  <xacro:include filename="$(find topower_v1)/robot_model/topower_v1_pan_tilt_cam.urdf.xacro" />
+  <xacro:include filename="$(find topower_v1)/robot_model/topower_v1_arm.urdf.xacro" />
+  <xacro:include filename="$(find topower_v1)/robot_model/topower_v1.gazebo" />
+
+  <joint name="joint_cam_to_platform" type="fixed">
+      <parent link="vehicle_platform"/>
+      <child link="pan_tilt_root"/>
+      <origin xyz="0 ${-0.5*(platform_y-pan_box_y)} ${0.5*platform_z}" rpy="0 0 0"/>
+  </joint>
+
+  <joint name="joint_arm_to_body" type="fixed">
+      <parent link="vehicle_body"/>
+      <child link="arm_root"/>
+      <origin xyz="${-battery_box_radius} 0 0" rpy="0 0 0"/>
+  </joint>
+</robot>

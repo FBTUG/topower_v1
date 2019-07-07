@@ -91,7 +91,62 @@
         <child link="gripper_r"/>
         <axis xyz="1 0 0"/>
         <origin xyz="${0.5*gripper_x} ${gripper_offset_y} ${gripper_base_z}" rpy="0 0 0"/>
-        <limit lower="${gripper_open_dist}" upper="0" effort="100" velocity="10" />
+        <limit lower="0" upper="${gripper_open_dist}" effort="100" velocity="10" />
         <mimic joint="joint_gripper_l" multiplier="-1" offset="0" />
     </joint>
+
+    <transmission name="tran_arm_base">
+        <type>transmission_interface/SimpleTransmission</type>
+        <joint name="joint_arm_base">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        </joint>
+        <actuator name="motor_arm_base">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+    </transmission>
+
+    <transmission name="tran_arm_a">
+        <type>transmission_interface/SimpleTransmission</type>
+        <joint name="joint_arm_a">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        </joint>
+        <actuator name="motor_arm_a">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+    </transmission>
+
+    <transmission name="tran_arm_b">
+        <type>transmission_interface/SimpleTransmission</type>
+        <joint name="joint_arm_b">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        </joint>
+        <actuator name="motor_arm_b">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+    </transmission>
+
+    <transmission name="tran_gripper_base">
+        <type>transmission_interface/SimpleTransmission</type>
+        <joint name="joint_gripper_base">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        </joint>
+        <actuator name="motor_gripper_base">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+    </transmission>
+
+    <transmission name="tran_gripper_l">
+        <type>transmission_interface/SimpleTransmission</type>
+        <joint name="joint_gripper_l">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        </joint>
+        <actuator name="motor_gripper_l">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+    </transmission>
 </robot>

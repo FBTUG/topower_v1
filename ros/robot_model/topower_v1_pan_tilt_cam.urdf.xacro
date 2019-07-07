@@ -1,9 +1,13 @@
 <?xml version="1.0"?>
 <robot name="topower_v1" xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <xacro:property name="pan_base_x" value="0.055"/>
+    <xacro:property name="pan_base_y" value="0.02"/>
+    <xacro:property name="pan_base_z" value="0.02"/>
+    <xacro:property name="pan_base_mass" value="0.1"/>
 
     <xacro:property name="pan_box_x" value="0.055"/>
     <xacro:property name="pan_box_y" value="0.045"/>
-    <xacro:property name="pan_box_z" value="0.035"/>
+    <xacro:property name="pan_box_z" value="0.005"/>
     <xacro:property name="pan_box_mass" value="0.1"/>
 
     <xacro:property name="tilt_base_x" value="0.055"/>
@@ -21,17 +25,25 @@
     <xacro:property name="cam_mass" value="0.02"/>
     
     <!-- ==================body======================= -->
-    <link name="pan_tilt_base" />
+    <link name="pan_tilt_root" />
+    <xacro:box_link name="pan_base" size_x="${pan_base_x}" size_y="${pan_base_y}" size_z="${pan_base_z}" mass="${pan_base_mass}" material="white"/>
     <xacro:box_link name="pan_box" size_x="${pan_box_x}" size_y="${pan_box_y}" size_z="${pan_box_z}" mass="${pan_box_mass}" material="white"/>
     <xacro:box_link name="tilt_base" size_x="${tilt_base_x}" size_y="${tilt_base_y}" size_z="${tilt_base_z}" mass="${tilt_base_mass}" material="white"/>
     <xacro:box_link name="tilt_box" size_x="${tilt_box_x}" size_y="${tilt_box_y}" size_z="${tilt_box_z}" mass="${tilt_box_mass}" material="orange"/>
-    <xacro:cylinder_link name="cam" radius="${cam_radius}" height="${cam_height}" mass="${cam_mass}" material="orange"/>
+    <xacro:cylinder_link name="camera_link" radius="${cam_radius}" height="${cam_height}" mass="${cam_mass}" material="orange"/>
+    <link name="camera_link_optical" />
+
+    <joint name="joint_pan_tilt_root_to_pan_base" type="fixed">
+        <parent link="pan_tilt_root"/>
+        <child link="pan_base"/>
+        <origin xyz="0 0 ${0.5*pan_base_z}" rpy="0 0 0"/>
+    </joint>
 
     <joint name="joint_cam_pan" type="revolute">
-        <parent link="pan_tilt_base"/>
+        <parent link="pan_base"/>
         <child link="pan_box"/>
         <axis xyz="0 0 1"/>
-        <origin xyz="0 0 ${0.5*pan_box_z}" rpy="0 0 0"/>
+        <origin xyz="0 0 ${0.5*(pan_base_z+pan_box_z)}" rpy="0 0 0"/>
         <limit lower="${-2*PI/3}" upper="${2*PI/3}" effort="100" velocity="10" />
     </joint>
 
@@ -51,18 +63,24 @@
 
     <joint name="joint_tilt_base_to_cam" type="fixed">
         <parent link="tilt_box"/>
-        <child link="cam"/>
+        <child link="camera_link"/>
         <origin xyz="${0.5*(tilt_box_x+cam_height)} 0 0" rpy="0 ${0.5*PI} 0"/>
+    </joint>
+
+    <joint name="joint_cam_to_optical" type="fixed">
+        <parent link="camera_link"/>
+        <child link="camera_link_optical"/>
+        <origin xyz="0 0 ${0.5*cam_height}" rpy="0 ${-0.5*PI} 0"/>
     </joint>
 
     <!-- ======================transitions=============================-->
     <transmission name="tran_cam_pan">
         <type>transmission_interface/SimpleTransmission</type>
         <joint name="joint_cam_pan">
-        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
         </joint>
         <actuator name="motor_cam_pan">
-        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
         <mechanicalReduction>1</mechanicalReduction>
         </actuator>
     </transmission>
@@ -70,10 +88,10 @@
     <transmission name="tran_cam_tilt">
         <type>transmission_interface/SimpleTransmission</type>
         <joint name="joint_cam_tilt">
-        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
         </joint>
         <actuator name="motor_cam_tilt">
-        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
         <mechanicalReduction>1</mechanicalReduction>
         </actuator>
     </transmission>

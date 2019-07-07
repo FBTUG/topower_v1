@@ -64,7 +64,50 @@ Visualization Manager:
         Expand Link Details: false
         Expand Tree: false
         Link Tree Style: Links in Alphabetic Order
-        cam:
+        arm_a:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        arm_b:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        arm_base:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        arm_root:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        battery_box:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        camera_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        camera_link_optical:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        gripper_base:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        gripper_l:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        gripper_r:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -138,7 +181,25 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: true
-        cam:
+        arm_a:
+          Value: true
+        arm_b:
+          Value: true
+        arm_base:
+          Value: true
+        arm_root:
+          Value: true
+        battery_box:
+          Value: true
+        camera_link:
+          Value: true
+        camera_link_optical:
+          Value: true
+        gripper_base:
+          Value: true
+        gripper_l:
+          Value: true
+        gripper_r:
           Value: true
         pan_box:
           Value: true
@@ -172,6 +233,16 @@ Visualization Manager:
       Tree:
         vehicle_base:
           vehicle_body:
+            arm_root:
+              battery_box:
+                arm_base:
+                  arm_a:
+                    arm_b:
+                      gripper_base:
+                        gripper_l:
+                          {}
+                        gripper_r:
+                          {}
             passive_wheel_l:
               {}
             passive_wheel_r:
@@ -181,8 +252,9 @@ Visualization Manager:
                 pan_box:
                   tilt_base:
                     tilt_box:
-                      cam:
-                        {}
+                      camera_link:
+                        camera_link_optical:
+                          {}
               vehicle_ctl_box:
                 {}
             wheel_l:
@@ -219,25 +291,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 0.5719630122184753
+      Distance: 0.7784790992736816
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: -0.005836181342601776
-        Y: 0.020337702706456184
-        Z: 0.03154626488685608
+        X: -0.002940461505204439
+        Y: 0.03759108483791351
+        Z: 0.1804019808769226
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.4897972345352173
+      Pitch: 0.5797971487045288
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 5.590435028076172
+      Yaw: 5.0254364013671875
     Saved: ~
 Window Geometry:
   Displays:
