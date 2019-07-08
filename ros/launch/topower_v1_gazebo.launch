@@ -23,10 +23,18 @@
   <rosparam file="$(find topower_v1)/config/topower_v1_control.yaml" command="load"/>
 
   <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
-	output="screen" args="joint_state_controller
-	  wheel_l_velocity_controller wheel_r_velocity_controller
+	output="screen" ns="topower_v1" args="joint_state_controller
+	  wheel_l_effort_controller wheel_r_effort_controller
     cam_pan_position_controller cam_tilt_position_controller arm_base_position_controller
     arm_a_position_controller arm_b_position_controller gripper_base_position_controller 
     gripper_l_position_controller"/>
+
+  <node name="robot_state_publisher" ns="topower_v1" pkg="robot_state_publisher" type="robot_state_publisher"
+  respawn="false" output="screen">
+  </node>
+
+  <node pkg="joint_state_publisher" type="joint_state_publisher" name="joint_state_publisher">
+    <param name="rate" value="50" />
+  </node>
 
 </launch>
