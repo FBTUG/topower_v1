@@ -51,7 +51,7 @@
         <child link="arm_base"/>
         <axis xyz="0 0 1"/>
         <origin xyz="0 0 ${0.5*(battery_box_height+arm_base_height)}" rpy="0 0 0"/>
-        <limit lower="${-PI}" upper="${PI}" effort="100" velocity="10" />
+        <limit lower="${-PI}" upper="${PI}" effort="12" velocity="0.9" />
     </joint>
 
     <joint name="joint_arm_a" type="revolute">
@@ -59,7 +59,7 @@
         <child link="arm_a"/>
         <axis xyz="1 0 0"/>
         <origin xyz="0 0 ${0.5*arm_base_height}" rpy="0 0 0"/>
-        <limit lower="${-0.5*PI}" upper="${0.5*PI}" effort="100" velocity="10" />
+        <limit lower="${-0.5*PI}" upper="${0.5*PI}" effort="12" velocity="0.9" />
     </joint>
 
     <joint name="joint_arm_b" type="revolute">
@@ -67,7 +67,7 @@
         <child link="arm_b"/>
         <axis xyz="1 0 0"/>
         <origin xyz="0 0 ${arm_a_z}" rpy="0 0 0"/>
-        <limit lower="${-0.5*PI}" upper="${0.5*PI}" effort="100" velocity="10" />
+        <limit lower="${-0.5*PI}" upper="${0.5*PI}" effort="10" velocity="0.9" />
     </joint>
 
     <joint name="joint_gripper_base" type="revolute">
@@ -75,7 +75,7 @@
         <child link="gripper_base"/>
         <axis xyz="1 0 0"/>
         <origin xyz="0 ${gripper_base_offset_y} ${arm_b_z}" rpy="0 0 0"/>
-        <limit lower="${-0.5*PI}" upper="${0.5*PI}" effort="100" velocity="10" />
+        <limit lower="${-0.5*PI}" upper="${0.5*PI}" effort="12" velocity="0.9" />
     </joint>
 
     <joint name="joint_gripper_l" type="prismatic">
@@ -83,7 +83,7 @@
         <child link="gripper_l"/>
         <axis xyz="1 0 0"/>
         <origin xyz="${-0.5*gripper_x} ${gripper_offset_y} ${gripper_base_z}" rpy="0 0 0"/>
-        <limit lower="${-gripper_open_dist}" upper="0" effort="100" velocity="10" />
+        <limit lower="${-gripper_open_dist}" upper="0" effort="12" velocity="0.9" />
     </joint>
 
     <joint name="joint_gripper_r" type="prismatic">
@@ -91,7 +91,7 @@
         <child link="gripper_r"/>
         <axis xyz="1 0 0"/>
         <origin xyz="${0.5*gripper_x} ${gripper_offset_y} ${gripper_base_z}" rpy="0 0 0"/>
-        <limit lower="0" upper="${gripper_open_dist}" effort="100" velocity="10" />
+        <limit lower="0" upper="${gripper_open_dist}" effort="12" velocity="0.9" />
         <mimic joint="joint_gripper_l" multiplier="-1" offset="0" />
     </joint>
 

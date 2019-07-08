@@ -29,12 +29,12 @@
     arm_a_position_controller arm_b_position_controller gripper_base_position_controller 
     gripper_l_position_controller"/>
 
-  <node name="robot_state_publisher" ns="topower_v1" pkg="robot_state_publisher" type="robot_state_publisher"
+  <!--<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"
   respawn="false" output="screen">
   </node>
 
   <node pkg="joint_state_publisher" type="joint_state_publisher" name="joint_state_publisher">
     <param name="rate" value="50" />
-  </node>
+  </node>-->
 
 </launch>
