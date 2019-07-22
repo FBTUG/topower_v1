@@ -14,10 +14,9 @@ ros::Publisher chatter("chatter", &str_msg);
 
 char hello[13] = "hello world!";
 
-const char* ssid = "YOUR_WIFI_SSID"
-const char* password = "YOUR_WIFI_PASSWORD";
-const char* masterip = "YOUR_ROS_MASTER_IP";
-IPAddress server(masterip);      // Set the rosserial socket ROSCORE SERVER IP address
+const char* ssid = "aga-mobile";
+const char* password = "aga-wifi";
+IPAddress server(192,168,43,237);      // Set the rosserial socket ROSCORE SERVER IP address
 const uint16_t serverPort = 11411; // Set the rosserial socket server port
 
 void setup()

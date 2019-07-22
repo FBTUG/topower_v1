@@ -1,0 +1,93 @@
+topower_v1:
+  # Publish all joint states -----------------------------------
+  joint_state_controller:
+    type: joint_state_controller/JointStateController
+    publish_rate: 50  
+  
+  # Controllers ---------------------------------------
+  gazebo_ros_control:
+    pid_gains:
+      joint_cam_pan:
+        p: 0.1
+        i: 0
+        d: 0.01
+        i_clamp: 1
+      joint_cam_tilt:
+        p: 0.1
+        i: 0
+        d: 0.01
+        i_clamp: 1
+      joint_arm_base:
+        p: 100
+        i: 1
+        d: 1
+        i_clamp: 1
+      joint_arm_a:
+        p: 100
+        i: 1
+        d: 1
+        i_clamp: 1
+      joint_arm_b:
+        p: 100
+        i: 1
+        d: 1
+        i_clamp: 1
+      joint_gripper_base:
+        p: 100
+        i: 1
+        d: 1
+        i_clamp: 1
+      joint_gripper_l:
+        p: 5
+        i: 0
+        d: 1
+        i_clamp: 1
+        
+  wheel_l_effort_controller:
+    type: effort_controllers/JointEffortController
+    joint: joint_wheel_l
+    pid: {p: 0.001, i: 0, d: 0.001}
+  wheel_r_effort_controller:
+    type: effort_controllers/JointEffortController
+    joint: joint_wheel_r
+    pid: {p: 0.001, i: 0, d: 0.001}
+
+  cam_pan_position_controller:
+    type: position_controllers/JointPositionController
+    joint: joint_cam_pan
+  cam_tilt_position_controller:
+    type: position_controllers/JointPositionController
+    joint: joint_cam_tilt
+
+  gripper_l_position_controller:
+    type: position_controllers/JointPositionController
+    joint: joint_gripper_l
+
+  arm_controller:
+    type: "position_controllers/JointTrajectoryController"
+    joints:
+      - joint_arm_base
+      - joint_arm_a
+      - joint_arm_b
+      - joint_gripper_base
+    gains:
+      joint_arm_base:
+        p: 100
+        d: 1
+        i: 1
+        i_clamp: 1
+      joint_arm_a:
+        p: 100
+        d: 1
+        i: 1
+        i_clamp: 1
+      joint_arm_b:
+        p: 100
+        d: 1
+        i: 1
+        i_clamp: 1
+      joint_gripper_base:
+        p: 100
+        d: 1
+        i: 1
+        i_clamp: 1

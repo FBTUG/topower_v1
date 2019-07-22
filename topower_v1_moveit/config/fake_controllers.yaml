@@ -1,0 +1,10 @@
+controller_list:
+  - name: fake_arm_controller
+    joints:
+      - joint_arm_base
+      - joint_arm_a
+      - joint_arm_b
+      - joint_gripper_base
+  - name: fake_gripper_controller
+    joints:
+      - joint_gripper_l

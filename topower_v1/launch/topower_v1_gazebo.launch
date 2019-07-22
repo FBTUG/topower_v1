@@ -1,0 +1,54 @@
+<launch>
+  <arg name="paused" default="false"/>
+  <arg name="use_sim_time" default="true"/>
+  <arg name="gui" default="true"/>
+  <arg name="headless" default="false"/>
+  <arg name="debug" default="false"/>
+
+  <!-- open empty world -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find topower_v1)/worlds/topower_v1.world"/>
+    <arg name="debug" value="$(arg debug)" />
+    <arg name="gui" value="$(arg gui)" />
+    <arg name="paused" value="$(arg paused)"/>
+    <arg name="use_sim_time" value="$(arg use_sim_time)"/>
+    <arg name="headless" value="$(arg headless)"/>
+  </include>
+
+  <!-- load robot -->
+  <param name="robot_description"
+    command="$(find xacro)/xacro '$(find topower_v1)/robot_model/topower_v1.xacro'" />
+
+  <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
+    args="-urdf -model topower_v1 -param robot_description"/>
+
+  <!-- load ros controller -->
+  <rosparam file="$(find topower_v1)/config/topower_v1_control.yaml" command="load"/>
+
+  <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
+	output="screen" ns="topower_v1" args="joint_state_controller
+	  wheel_l_effort_controller wheel_r_effort_controller
+    cam_pan_position_controller cam_tilt_position_controller arm_controller
+    gripper_l_position_controller"/>
+
+  <!-- for moveit arm control -->
+  <include file="$(find topower_v1_moveit)/launch/move_group.launch">
+    <arg name="allow_trajectory_execution" value="true"/>
+    <arg name="fake_execution" value="false"/>
+    <arg name="info" value="true"/>
+    <arg name="debug" value="false"/>
+  </include>
+
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"
+  respawn="false" output="screen">
+    <remap from="/joint_states" to="/topower_v1/joint_states"/>
+  </node>
+
+  <node name="arm_control_node" pkg="topower_v1" type="arm_control_node.py" output="screen">
+    <remap from="/joint_states" to="/topower_v1/joint_states"/>
+  </node>
+
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find topower_v1)/launch/topower_v1_moveit.rviz"/>
+
+
+</launch>

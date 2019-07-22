@@ -1,0 +1,34 @@
+# joint_limits.yaml allows the dynamics properties specified in the URDF to be overwritten or augmented as needed
+# Specific joint properties can be changed with the keys [max_position, min_position, max_velocity, max_acceleration]
+# Joint limits can be turned off with [has_velocity_limits, has_acceleration_limits]
+joint_limits:
+  joint_arm_a:
+    has_velocity_limits: true
+    max_velocity: 0.9
+    has_acceleration_limits: false
+    max_acceleration: 0
+  joint_arm_b:
+    has_velocity_limits: true
+    max_velocity: 0.9
+    has_acceleration_limits: false
+    max_acceleration: 0
+  joint_arm_base:
+    has_velocity_limits: true
+    max_velocity: 0.9
+    has_acceleration_limits: false
+    max_acceleration: 0
+  joint_gripper_base:
+    has_velocity_limits: true
+    max_velocity: 0.9
+    has_acceleration_limits: false
+    max_acceleration: 0
+  joint_gripper_l:
+    has_velocity_limits: true
+    max_velocity: 0.9
+    has_acceleration_limits: false
+    max_acceleration: 0
+  joint_gripper_r:
+    has_velocity_limits: true
+    max_velocity: 0.9
+    has_acceleration_limits: false
+    max_acceleration: 0

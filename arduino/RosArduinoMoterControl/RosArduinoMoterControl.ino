@@ -2,7 +2,7 @@
 
 #include <ros.h>
 #include <topower_v1/WheelDrive.h>
-#include <topower_v1/PanTiltServo.h>
+#include <topower_v1/CamPanTilt.h>
 #include <std_msgs/String.h>
 #include <SoftPWM.h>
 
@@ -57,7 +57,7 @@ void wheelDriveCb( const topower_v1::WheelDrive& cmd){
 }
 ros::Subscriber<topower_v1::WheelDrive> wheelDriveSub("wheel_drive", &wheelDriveCb );
 
-void panTiltServoCb( const topower_v1::PanTiltServo& cmd){
+void camPanTiltCb( const topower_v1::CamPanTilt& cmd){
   panServo.write(cmd.panPos);
   tiltServo.write(cmd.tiltPos);
 
@@ -65,7 +65,7 @@ void panTiltServoCb( const topower_v1::PanTiltServo& cmd){
   str_msg.data = output.c_str();
   //arduinoEcho.publish( &str_msg );
 }
-ros::Subscriber<topower_v1::PanTiltServo> panTiltSub("pan_tilt_servo", &panTiltServoCb );
+ros::Subscriber<topower_v1::CamPanTilt> panTiltSub("cam_pan_tilt", &camPanTiltCb );
 
 void ClearPin(){
   

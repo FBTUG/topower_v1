@@ -1,0 +1,152 @@
+<?xml version="1.0"?>
+<robot name="topower_v1" xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <xacro:property name="battery_box_radius" value="0.05"/>
+    <xacro:property name="battery_box_height" value="0.065"/>
+    <xacro:property name="battery_box_mass" value="0.4"/>
+
+    <xacro:property name="arm_base_radius" value="0.025"/>
+    <xacro:property name="arm_base_height" value="0.045"/>
+    <xacro:property name="arm_base_mass" value="0.2"/>
+
+    <xacro:property name="arm_a_x" value="0.045"/>
+    <xacro:property name="arm_a_y" value="0.03"/>
+    <xacro:property name="arm_a_z" value="0.1"/>
+    <xacro:property name="arm_a_mass" value="0.5"/>
+
+    <xacro:property name="arm_b_x" value="0.045"/>
+    <xacro:property name="arm_b_y" value="0.03"/>
+    <xacro:property name="arm_b_z" value="0.1"/>
+    <xacro:property name="arm_b_mass" value="0.5"/>
+
+    <xacro:property name="gripper_base_x" value="0.055"/>
+    <xacro:property name="gripper_base_y" value="0.07"/>
+    <xacro:property name="gripper_base_z" value="0.06"/>
+    <xacro:property name="gripper_base_mass" value="0.5"/>
+    <xacro:property name="gripper_base_offset_y" value="0.02"/>
+
+    <xacro:property name="gripper_x" value="0.02"/>
+    <xacro:property name="gripper_y" value="0.015"/>
+    <xacro:property name="gripper_z" value="0.045"/>
+    <xacro:property name="gripper_mass" value="0.1"/>
+    <xacro:property name="gripper_offset_y" value="-0.02"/>
+    <xacro:property name="gripper_open_dist" value="0.035"/>
+
+    <link name="arm_root" />
+    <xacro:cylinder_link name="battery_box" radius="${battery_box_radius}" height="${battery_box_height}" mass="${battery_box_mass}" material="black"/>
+    <xacro:cylinder_link name="arm_base" radius="${arm_base_radius}" height="${arm_base_height}" mass="${arm_base_mass}" material="white"/>
+    <xacro:box_link name="arm_a" size_x="${arm_a_x}" size_y="${arm_a_y}" size_z="${arm_a_z}" mass="${arm_a_mass}" material="white" ori="0 0 ${0.5*arm_a_z}" />
+    <xacro:box_link name="arm_b" size_x="${arm_b_x}" size_y="${arm_b_y}" size_z="${arm_b_z}" mass="${arm_b_mass}" material="grey" ori="0 0 ${0.5*arm_b_z}" />
+    <xacro:box_link name="gripper_base" size_x="${gripper_base_x}" size_y="${gripper_base_y}" size_z="${gripper_base_z}" mass="${gripper_base_mass}" material="black" ori="0 0 ${0.5*gripper_base_z}" />
+    <xacro:box_link name="gripper_l" size_x="${gripper_x}" size_y="${gripper_y}" size_z="${gripper_z}" mass="${gripper_mass}" material="white" />
+    <xacro:box_link name="gripper_r" size_x="${gripper_x}" size_y="${gripper_y}" size_z="${gripper_z}" mass="${gripper_mass}" material="grey" />
+
+    <joint name="joint_arm_root_to_battery_box" type="fixed">
+        <parent link="arm_root"/>
+        <child link="battery_box"/>
+        <origin xyz="0 0 ${0.5*battery_box_height}" rpy="0 0 0"/>
+    </joint>
+
+    <joint name="joint_arm_base" type="revolute">
+        <parent link="battery_box"/>
+        <child link="arm_base"/>
+        <axis xyz="0 0 1"/>
+        <origin xyz="0 0 ${0.5*(battery_box_height+arm_base_height)}" rpy="0 0 0"/>
+        <limit lower="${-PI}" upper="${PI}" effort="12" velocity="0.9" />
+    </joint>
+
+    <joint name="joint_arm_a" type="revolute">
+        <parent link="arm_base"/>
+        <child link="arm_a"/>
+        <axis xyz="1 0 0"/>
+        <origin xyz="0 0 ${0.5*arm_base_height}" rpy="0 0 0"/>
+        <limit lower="${-0.5*PI}" upper="${0.5*PI}" effort="12" velocity="0.9" />
+    </joint>
+
+    <joint name="joint_arm_b" type="revolute">
+        <parent link="arm_a"/>
+        <child link="arm_b"/>
+        <axis xyz="1 0 0"/>
+        <origin xyz="0 0 ${arm_a_z}" rpy="0 0 0"/>
+        <limit lower="${-0.5*PI}" upper="${0.5*PI}" effort="10" velocity="0.9" />
+    </joint>
+
+    <joint name="joint_gripper_base" type="revolute">
+        <parent link="arm_b"/>
+        <child link="gripper_base"/>
+        <axis xyz="1 0 0"/>
+        <origin xyz="0 ${gripper_base_offset_y} ${arm_b_z}" rpy="0 0 0"/>
+        <limit lower="${-0.5*PI}" upper="${0.5*PI}" effort="12" velocity="0.9" />
+    </joint>
+
+    <joint name="joint_gripper_l" type="prismatic">
+        <parent link="gripper_base"/>
+        <child link="gripper_l"/>
+        <axis xyz="1 0 0"/>
+        <origin xyz="${-0.5*gripper_x} ${gripper_offset_y} ${gripper_base_z}" rpy="0 0 0"/>
+        <limit lower="${-gripper_open_dist}" upper="0" effort="12" velocity="0.9" />
+    </joint>
+
+    <joint name="joint_gripper_r" type="prismatic">
+        <parent link="gripper_base"/>
+        <child link="gripper_r"/>
+        <axis xyz="1 0 0"/>
+        <origin xyz="${0.5*gripper_x} ${gripper_offset_y} ${gripper_base_z}" rpy="0 0 0"/>
+        <limit lower="0" upper="${gripper_open_dist}" effort="12" velocity="0.9" />
+        <mimic joint="joint_gripper_l" multiplier="-1" offset="0" />
+    </joint>
+
+    <transmission name="tran_arm_base">
+        <type>transmission_interface/SimpleTransmission</type>
+        <joint name="joint_arm_base">
+        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+        </joint>
+        <actuator name="motor_arm_base">
+        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+    </transmission>
+
+    <transmission name="tran_arm_a">
+        <type>transmission_interface/SimpleTransmission</type>
+        <joint name="joint_arm_a">
+        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+        </joint>
+        <actuator name="motor_arm_a">
+        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+    </transmission>
+
+    <transmission name="tran_arm_b">
+        <type>transmission_interface/SimpleTransmission</type>
+        <joint name="joint_arm_b">
+        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+        </joint>
+        <actuator name="motor_arm_b">
+        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+    </transmission>
+
+    <transmission name="tran_gripper_base">
+        <type>transmission_interface/SimpleTransmission</type>
+        <joint name="joint_gripper_base">
+        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+        </joint>
+        <actuator name="motor_gripper_base">
+        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+    </transmission>
+
+    <transmission name="tran_gripper_l">
+        <type>transmission_interface/SimpleTransmission</type>
+        <joint name="joint_gripper_l">
+        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+        </joint>
+        <actuator name="motor_gripper_l">
+        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+    </transmission>
+</robot>
