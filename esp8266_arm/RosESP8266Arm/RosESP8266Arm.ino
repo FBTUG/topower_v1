@@ -22,24 +22,53 @@ byte *retBuffer;
 
 ros::NodeHandle  nh;
 topower_v1::ArmPose armPoseCmd, armPoseState;
-ros::Publisher armPosePub("arm_pose_state", &armPoseState);
+ros::Publisher armPosePub("/arm_pose_state", &armPoseState);
 
 void CommandCB( const topower_v1::ArmPose& armPose){
-  servo.move(ARM_BASE, armPose.armBasePos, 128);
-  servo.move(ARM_A, armPose.armAPos, 128);
-  servo.move(ARM_B, armPose.armBPos, 128);
-  servo.move(GRIPPER_BASE, armPose.gripperBasePos, 128);
-  servo.move(GRIPPER, armPose.gripperPos, 128);
+  armPoseCmd.armBasePos = armPose.armBasePos;
+  armPoseCmd.armAPos = armPose.armAPos;
+  armPoseCmd.armBPos = armPose.armBPos;
+  armPoseCmd.gripperBasePos = armPose.gripperBasePos;
+  armPoseCmd.gripperPos = armPose.gripperPos;
 }
-ros::Subscriber<topower_v1::ArmPose> sub("arm_pose_cmd", &CommandCB);
+ros::Subscriber<topower_v1::ArmPose> armCmdSub("/arm_pose_cmd", &CommandCB);
 
 void PublishState(){
   armPoseState.armBasePos = servo.getPos(ARM_BASE);
+  if(armPoseState.armBasePos == 255){
+    armPoseState.armBasePos = servo.lastAngle(ARM_BASE);  
+  }
+  
   armPoseState.armAPos = servo.getPos(ARM_A);
+  if(armPoseState.armAPos == 255){
+    armPoseState.armAPos = servo.lastAngle(ARM_A);  
+  }
+  
   armPoseState.armBPos = servo.getPos(ARM_B);
+  if(armPoseState.armBPos == 255){
+    armPoseState.armBPos = servo.lastAngle(ARM_B);  
+  }
+  
   armPoseState.gripperBasePos = servo.getPos(GRIPPER_BASE);
+  if(armPoseState.gripperBasePos == 255){
+    armPoseState.gripperBasePos = servo.lastAngle(GRIPPER_BASE);  
+  }
+  
   armPoseState.gripperPos = servo.getPos(GRIPPER);
+  if(armPoseState.gripperPos == 255){
+    armPoseState.gripperPos = servo.lastAngle(GRIPPER);  
+  }
+  
   armPosePub.publish(&armPoseState);
+}
+
+void MoveArm(){
+  int t = 80;
+  servo.move(ARM_BASE, armPoseCmd.armBasePos, t);
+  servo.move(ARM_A, armPoseCmd.armAPos, t);
+  servo.move(ARM_B, armPoseCmd.armBPos, t);
+  servo.move(GRIPPER_BASE, armPoseCmd.gripperBasePos, t);
+  servo.move(GRIPPER, armPoseCmd.gripperPos, t);
 }
 
 void setup()
@@ -49,12 +78,17 @@ void setup()
 
   Serial.begin(115200);
   Serial.println();
+
+  armPoseCmd.armBasePos = 90;
+  armPoseCmd.armAPos = 90;
+  armPoseCmd.armBPos = 90;
+  armPoseCmd.gripperBasePos = 90;
+  armPoseCmd.gripperPos = 0;
   
   servo.init(MOTOR_NUM);
   servo.setDebug(false);
   retBuffer = servo.retBuffer();
   servo.begin();
-  //servo.lockAll();
   servo.setLED(0, 0);
   
   
@@ -75,13 +109,13 @@ void setup()
   nh.getHardware()->setConnection(server, serverPort);
   nh.initNode();
   nh.advertise(armPosePub);
+  nh.subscribe(armCmdSub);
 }
-
-
 
 void loop()
 {
   PublishState();
+  delay(1);
+  MoveArm();
   nh.spinOnce();
-  delay(10);
 }

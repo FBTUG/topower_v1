@@ -27,9 +27,7 @@
 
   <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
 	output="screen" ns="topower_v1" args="joint_state_controller
-	  wheel_l_effort_controller wheel_r_effort_controller
-    cam_pan_position_controller cam_tilt_position_controller arm_controller
-    gripper_l_position_controller"/>
+    arm_controller gripper_l_position_controller"/>
 
   <!-- for moveit arm control -->
   <include file="$(find topower_v1_moveit)/launch/move_group.launch">

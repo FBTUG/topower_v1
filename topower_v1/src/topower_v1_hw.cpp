@@ -6,7 +6,13 @@
 #include "topower_v1/CamPanTilt.h"
 
 #define DEG2RAD 3.1415926/180
-#define RAD2DEG 180/3.1415926
+#define ARM_BASE 0
+#define ARM_A 1
+#define ARM_B 2
+#define GRIPPER_BASE 3
+#define GRIPPER 4
+#define CAM_PAN 0
+#define CAM_TILT 1
 
 class ToPowerV1HW : public hardware_interface::RobotHW{
     public:
@@ -20,61 +26,27 @@ class ToPowerV1HW : public hardware_interface::RobotHW{
             }
             //position
             for(int i=0;i<5;i++){
-                hardware_interface::JointHandle posHandle(m_JointStateInterface.getHandle(armJoint[i]), &m_ArmCMD[i]);
+                hardware_interface::JointHandle posHandle(m_JointStateInterface.getHandle(armJoint[i]), &m_ArmCmd[i]);
                 m_PositionJointInterface.registerHandle(posHandle);
-            }
-
-            //pan tilt
-            //joint state
-            const char* panTiltJoint[] = {"joint_cam_pan","joint_cam_tilt"};
-            for(int i=0;i<2;i++){
-                hardware_interface::JointStateHandle stateHandle(panTiltJoint[i], &m_PanTiltPose[i], &m_PanTiltVel[i], &m_PanTiltEff[i]);
-                m_JointStateInterface.registerHandle(stateHandle);
-            }
-            //position
-            for(int i=0;i<2;i++){
-                hardware_interface::JointHandle posHandle(m_JointStateInterface.getHandle(panTiltJoint[i]), &m_PanTiltCMD[i]);
-                m_PositionJointInterface.registerHandle(posHandle);
-            }
-
-            //wheel
-            //joint state
-            const char* wheelJoint[] = {"joint_wheel_l","joint_wheel_r"};
-            for(int i=0;i<2;i++){
-                hardware_interface::JointStateHandle stateHandle(wheelJoint[i], &m_WheelPose[i], &m_WheelVel[i], &m_WheelEff[i]);
-                m_JointStateInterface.registerHandle(stateHandle);
-            }
-            //effort
-            for(int i=0;i<2;i++){
-                hardware_interface::JointHandle effortHandle(m_JointStateInterface.getHandle(wheelJoint[i]), &m_WheelCMD[i]);
-                m_EffortJointInterface.registerHandle(effortHandle);
             }
 
             registerInterface(&m_JointStateInterface);
             registerInterface(&m_PositionJointInterface);
-            registerInterface(&m_EffortJointInterface);
 
-            LoadOffset();
+            LoadOffsetScale();
             ResetArmState();
 
-            m_CmdPub = m_NH.advertise<topower_v1::ArmPose>("arm_pose_cmd", 1);
-            m_PoseSub = m_NH.subscribe("/arm_pose_state", 1, &ToPowerV1HW::ArmPoseCB, this);
-            m_PanTiltSub = m_NH.subscribe("/pan_tilt_state", 1, &ToPowerV1HW::PanTiltCB, this);
-        }
-
-        void PanTiltCB(const topower_v1::CamPanTilt::ConstPtr& msg){
-            //recieve arm pose from arduino & pass to joint state controller
-            m_PanTiltPose[0] = msg->panPos;
-            m_PanTiltPose[1] = msg->tiltPos;
+            m_ArmCmdPub = m_NH.advertise<topower_v1::ArmPose>("/arm_pose_cmd", 1);
+            m_ArmPoseSub = m_NH.subscribe("/arm_pose_state", 1, &ToPowerV1HW::ArmPoseCB, this);
         }
 
         void ArmPoseCB(const topower_v1::ArmPose::ConstPtr& msg){
             //recieve arm pose from esp8266 & pass to joint state controller
-            m_ArmPose[0] = (msg->armBasePos-m_ArmOffset[0])*DEG2RAD;
-            m_ArmPose[1] = (msg->armAPos-m_ArmOffset[1])*DEG2RAD;
-            m_ArmPose[2] = (msg->armBPos-m_ArmOffset[2])*DEG2RAD;
-            m_ArmPose[3] = (msg->gripperBasePos-m_ArmOffset[3])*DEG2RAD;
-            m_ArmPose[4] = (msg->gripperPos-m_ArmOffset[4])*-0.0005;
+            m_ArmPose[ARM_BASE] = (msg->armBasePos-m_ArmOffset[ARM_BASE])*m_ArmScale[ARM_BASE];
+            m_ArmPose[ARM_A] = (msg->armAPos-m_ArmOffset[ARM_A])*m_ArmScale[ARM_A];
+            m_ArmPose[ARM_B] = (msg->armBPos-m_ArmOffset[ARM_B])*m_ArmScale[ARM_B];
+            m_ArmPose[GRIPPER_BASE] = (msg->gripperBasePos-m_ArmOffset[GRIPPER_BASE])*m_ArmScale[GRIPPER_BASE];
+            m_ArmPose[GRIPPER] = (msg->gripperPos-m_ArmOffset[GRIPPER])*m_ArmScale[GRIPPER];
             //ROS_INFO("arm pose: %lf %lf %lf %lf %lf %lf", m_ArmPose[0],m_ArmPose[1],m_ArmPose[2],m_ArmPose[3],m_ArmPose[4],m_ArmPose[5]);
         }
 
@@ -83,15 +55,28 @@ class ToPowerV1HW : public hardware_interface::RobotHW{
         }
 
         void write(const ros::Time& time, const ros::Duration& period){
-            //ROS_INFO("Joint pos: %lf", m_ArmCMD[0]);
+            //ROS_INFO("arm cmd: %lf %lf %lf %lf %lf %lf", m_ArmCmd[0],m_ArmCmd[1],m_ArmCmd[2],m_ArmCmd[3],m_ArmCmd[4],m_ArmCmd[5]);
+            topower_v1::ArmPose armPose;
+            armPose.armBasePos = m_ArmCmd[ARM_BASE]/m_ArmScale[ARM_BASE]+m_ArmOffset[ARM_BASE];
+            armPose.armAPos = m_ArmCmd[ARM_A]/m_ArmScale[ARM_A]+m_ArmOffset[ARM_A];
+            armPose.armBPos = m_ArmCmd[ARM_B]/m_ArmScale[ARM_B]+m_ArmOffset[ARM_B];
+            armPose.gripperBasePos = m_ArmCmd[GRIPPER_BASE]/m_ArmScale[GRIPPER_BASE]+m_ArmOffset[GRIPPER_BASE];
+            armPose.gripperPos = m_ArmCmd[GRIPPER]/m_ArmScale[GRIPPER]+m_ArmOffset[GRIPPER];
+            m_ArmCmdPub.publish(armPose);
         }
 
-        void LoadOffset(){
-            m_ArmOffset[0] = 90;
-            m_ArmOffset[1] = 90;
-            m_ArmOffset[2] = 90;
-            m_ArmOffset[3] = 90;
-            m_ArmOffset[4] = 0;
+        void LoadOffsetScale(){
+            m_ArmOffset[ARM_BASE] = 90;
+            m_ArmOffset[ARM_A] = 90;
+            m_ArmOffset[ARM_B] = 90;
+            m_ArmOffset[GRIPPER_BASE] = 90;
+            m_ArmOffset[GRIPPER] = 0;
+
+            m_ArmScale[ARM_BASE] = -DEG2RAD;
+            m_ArmScale[ARM_A] = DEG2RAD;
+            m_ArmScale[ARM_B] = DEG2RAD;
+            m_ArmScale[GRIPPER_BASE] = DEG2RAD;
+            m_ArmScale[GRIPPER] = -0.0005;
         }
 
         void ResetArmState(){
@@ -100,46 +85,24 @@ class ToPowerV1HW : public hardware_interface::RobotHW{
                 m_ArmVel[i] = 0;
                 m_ArmEff[i] = 0;
             }
-
-            for(int i=0;i<2;i++){
-                m_PanTiltPose[i] = 0;
-                m_PanTiltVel[i] = 0;
-                m_PanTiltEff[i] = 0;
-            }
-
-            for(int i=0;i<2;i++){
-                m_WheelPose[i] = 0;
-                m_WheelVel[i] = 0;
-                m_WheelEff[i] = 0;
-            }
         }
 
     private:
         ros::NodeHandle m_NH;
-        ros::Publisher m_CmdPub;
-        ros::Subscriber m_PoseSub, m_PanTiltSub;
+        ros::Publisher m_ArmCmdPub;
+        ros::Subscriber m_ArmPoseSub;
 
         hardware_interface::JointStateInterface m_JointStateInterface;
         hardware_interface::PositionJointInterface m_PositionJointInterface;
-        hardware_interface::EffortJointInterface m_EffortJointInterface;
         
-        double m_ArmCMD[5];
-        double m_PanTiltCMD[2];
-        double m_WheelCMD[2];
+        double m_ArmCmd[5];
 
         double m_ArmPose[5];
         double m_ArmVel[5];
         double m_ArmEff[5];
 
-        double m_PanTiltPose[2];
-        double m_PanTiltVel[2];
-        double m_PanTiltEff[2];
-
-        double m_WheelPose[2];
-        double m_WheelVel[2];
-        double m_WheelEff[2];
-
         double m_ArmOffset[5];
+        double m_ArmScale[5];
 };
 
 int main(int argc, char** argv){
