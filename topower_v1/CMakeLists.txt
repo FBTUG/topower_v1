@@ -56,6 +56,7 @@ find_package(catkin REQUIRED COMPONENTS
    WheelDrive.msg
    CamPanTilt.msg
    ArmPose.msg
+   ArmJoyCmd.msg
  )
 
 ## Generate services in the 'srv' folder

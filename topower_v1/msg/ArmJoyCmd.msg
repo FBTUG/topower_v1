@@ -1,0 +1,6 @@
+float32 armBaseOffset
+float32 armAOffset
+float32 armBOffset
+float32 gripperBaseOffset
+bool resetPose
+bool randomPose

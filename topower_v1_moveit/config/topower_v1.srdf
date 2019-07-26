@@ -10,8 +10,6 @@
     <!--CHAINS: When a chain is specified, all the links along the chain (including endpoints) are included in the group. Additionally, all the joints that are parents to included links are also included. This means that joints along the chain and the parent joint of the base link are included in the group-->
     <!--SUBGROUPS: Groups can also be formed by referencing to already defined group names-->
     <group name="arm">
-        <link name="arm_root" />
-        <link name="battery_box" />
         <link name="arm_base" />
         <link name="arm_a" />
         <link name="arm_b" />
@@ -29,7 +27,7 @@
         <joint name="joint_gripper_base" value="0" />
     </group_state>
     <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
-    <end_effector name="arm_end_effector" parent_link="vehicle_base" group="arm" />
+    <end_effector name="arm_end_effector" parent_link="gripper_base" group="arm" />
     <!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->
     <disable_collisions link1="arm_a" link2="arm_b" reason="Adjacent" />
     <disable_collisions link1="arm_a" link2="arm_base" reason="Adjacent" />
@@ -43,6 +41,7 @@
     <disable_collisions link1="arm_a" link2="passive_wheel_l" reason="Never" />
     <disable_collisions link1="arm_a" link2="passive_wheel_r" reason="Never" />
     <disable_collisions link1="arm_a" link2="tilt_base" reason="Never" />
+    <disable_collisions link1="arm_a" link2="tilt_box" reason="Never" />
     <disable_collisions link1="arm_a" link2="vehicle_body" reason="Never" />
     <disable_collisions link1="arm_a" link2="vehicle_platform" reason="Never" />
     <disable_collisions link1="arm_a" link2="wheel_l" reason="Never" />
@@ -50,6 +49,8 @@
     <disable_collisions link1="arm_b" link2="arm_base" reason="Never" />
     <disable_collisions link1="arm_b" link2="battery_box" reason="Never" />
     <disable_collisions link1="arm_b" link2="gripper_base" reason="Adjacent" />
+    <disable_collisions link1="arm_b" link2="gripper_l" reason="Never" />
+    <disable_collisions link1="arm_b" link2="gripper_r" reason="Never" />
     <disable_collisions link1="arm_b" link2="passive_wheel_l" reason="Never" />
     <disable_collisions link1="arm_b" link2="passive_wheel_r" reason="Never" />
     <disable_collisions link1="arm_base" link2="battery_box" reason="Adjacent" />

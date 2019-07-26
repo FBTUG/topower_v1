@@ -47,6 +47,22 @@ topower_v1:
     type: position_controllers/JointPositionController
     joint: joint_gripper_l
 
+  cam_pan_position_controller:
+    type: position_controllers/JointPositionController
+    joint: joint_cam_pan
+
+  cam_tilt_position_controller:
+    type: position_controllers/JointPositionController
+    joint: joint_cam_tilt
+
+  wheel_l_effort_controller:
+    type: effort_controllers/JointEffortController
+    joint: joint_wheel_l
+
+  wheel_r_effort_controller:
+    type: effort_controllers/JointEffortController
+    joint: joint_wheel_r
+
   arm_controller:
     type: "position_controllers/JointTrajectoryController"
     joints:

@@ -1,13 +1,33 @@
 <launch>
     <node name="joy_node" pkg="joy" type="joy_node"/>
-    <node name="joy_mapper_node" pkg="topower_v1" type="joy_mapper_node.py"/>
-    <node name="serial_node" pkg="rosserial_python" type="serial_node.py">
-        <param name="port" value="/dev/ttyACM0" />
+    <node name="joy_mapper_node" pkg="topower_v1" type="joy_mapper_node.py">
+        <param name="updateRate" value="30"/>
+
+        <param name="panMin" value="-2.094395102"/>
+        <param name="panMax" value="2.094395102"/>
+        <param name="tiltMin" value="-1.570796327"/>
+        <param name="tiltMax" value="1.570796327"/>
+        <param name="gripperPosMin" value="-0.035"/>
+        <param name="gripperPosMax" value="0"/>
+
+        <param name="leftStickX" value="0"/>
+        <param name="leftStickY" value="1"/>
+        <param name="rightStickX" value="3"/>
+        <param name="rightStickY" value="4"/>
+        <param name="axisLT" value="2"/>
+        <param name="axisRT" value="5"/>
+        <param name="dirX" value="6"/>
+        <param name="dirY" value="7"/>
+
+        <param name="btA" value="0"/>
+        <param name="btB" value="1"/>
+        <param name="btX" value="2"/>
+        <param name="btY" value="3"/>
+        <param name="btLB" value="4"/>
+        <param name="btRB" value="5"/>
+        <param name="btBack" value="6"/>
+        <param name="btStart" value="7"/>
+
     </node>
-    <node name="cam_capture_node" pkg="topower_v1" type="cam_capture_node.py">
-        <param name="camID" value="0" />
-    </node>
-    <node name="car_control_node" pkg="topower_v1" type="car_control_node.py">
-        <param name="turnRatio" value="1.5" />
-    </node>
+    
 </launch>
