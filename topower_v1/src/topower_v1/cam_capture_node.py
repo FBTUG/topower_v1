@@ -16,7 +16,7 @@ class CamCapture():
         self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, self.width)
         self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, self.height)
         self.br = CvBridge()
-        self.pub = rospy.Publisher("~image/compressed",CompressedImage,queue_size=1)
+        self.pub = rospy.Publisher("/topower_v1/camera/image_raw/compressed",CompressedImage,queue_size=1)
 
     def Run(self):
         rate = rospy.Rate(self.rate)

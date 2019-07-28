@@ -63,7 +63,7 @@ void PublishState(){
 }
 
 void MoveArm(){
-  int t = 80;
+  int t = 50;
   servo.move(ARM_BASE, armPoseCmd.armBasePos, t);
   servo.move(ARM_A, armPoseCmd.armAPos, t);
   servo.move(ARM_B, armPoseCmd.armBPos, t);
