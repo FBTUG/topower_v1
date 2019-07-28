@@ -17,7 +17,7 @@ class CarControl():
         self.turnSpeed = 0  #range = -1~1
         rospy.loginfo("use leftRatio=%f rightRatio=%f minPWM=%d maxPWM=%d minSpeed=%f" % (self.leftRatio,self.rightRatio,self.minPWM,self.maxPWM,self.minSpeed))
 
-        self.sub = rospy.Subscriber("cmd_vel", Twist, self.VelocityCallback)
+        self.sub = rospy.Subscriber("/cmd_vel", Twist, self.VelocityCallback)
         self.wheelLPub = rospy.Publisher("/topower_v1/wheel_l_effort_controller/command",Float64,queue_size=1)
         self.wheelRPub = rospy.Publisher("/topower_v1/wheel_r_effort_controller/command",Float64,queue_size=1)
 
