@@ -94,9 +94,9 @@ class JoyMapper():
             self.armBOffset = msg.axes[self.rightStickY]
 
             if msg.buttons[self.btA] == 1:
-                self.gripperPosOffset = 1
-            elif msg.buttons[self.btB] == 1:
                 self.gripperPosOffset = -1
+            elif msg.buttons[self.btB] == 1:
+                self.gripperPosOffset = 1
             else:
                 self.gripperPosOffset = 0
             
