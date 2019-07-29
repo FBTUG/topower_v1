@@ -28,7 +28,7 @@
     <remap from="/joint_states" to="/topower_v1/joint_states"/>
   </node>
 
-  <node name="serial_node_tcp" pkg="rosserial_python" type="serial_node.py"  args="tcp"></node>
+  <node name="serial_node_tcp" pkg="rosserial_python" type="serial_node.py"  args="tcp" output="screen"></node>
 
   <!--car control-->
   <node name="serial_node" pkg="rosserial_python" type="serial_node.py">
