@@ -3,6 +3,9 @@ import rospy
 import cv2
 from cv_bridge import CvBridge
 from sensor_msgs.msg import CompressedImage, CameraInfo
+from std_msgs.msg import Empty
+import datetime
+import os
 
 class CamCapture():
     def __init__(self):
@@ -17,14 +20,27 @@ class CamCapture():
         self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, self.height)
         self.br = CvBridge()
         self.pub = rospy.Publisher("/topower_v1/camera/image_raw/compressed",CompressedImage,queue_size=1)
+        self.sub = rospy.Subscriber("/topower_v1/camera/capture",Empty,self.CaptureImage)
+        self.savePath = rospy.get_param("~savePath","captureImage/")
+        self.frame = None
+
+    def CaptureImage(self,msg):
+        if self.frame is not None:
+            if not os.path.exists(self.savePath):
+                os.makedirs(self.savePath)
+
+            now = datetime.datetime.now()
+            filename = self.savePath+now.strftime("%Y-%m-%d_%H-%M-%S")+".jpg"
+            rospy.loginfo("save image "+filename)
+            cv2.imwrite(filename, self.frame)
 
     def Run(self):
         rate = rospy.Rate(self.rate)
         while not rospy.is_shutdown():
-            ret, frame = self.cap.read()
-            msg = self.br.cv2_to_compressed_imgmsg(frame)
+            ret, self.frame = self.cap.read()
+            msg = self.br.cv2_to_compressed_imgmsg(self.frame)
             self.pub.publish(msg)
-            #cv2.imshow('frame',frame)
+            #cv2.imshow('frame',self.frame)
             #cv2.waitKey(1)
             rate.sleep() 
 

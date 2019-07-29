@@ -1,6 +1,6 @@
 <launch>
     <node name="joy_node" pkg="joy" type="joy_node"/>
-    <node name="joy_mapper_node" pkg="topower_v1" type="joy_mapper_node.py">
+    <node name="joy_mapper_node" pkg="topower_v1" type="joy_mapper_node.py" output="screen">
         <param name="updateRate" value="30"/>
 
         <param name="panMin" value="-2.094395102"/>

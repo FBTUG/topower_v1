@@ -3,7 +3,7 @@ import rospy
 from geometry_msgs.msg import Twist
 from sensor_msgs.msg import Joy
 from topower_v1.msg import CamPanTilt,ArmJoyCmd
-from std_msgs.msg import Float64
+from std_msgs.msg import Float64,Empty
 import math
 
 class JoyMapper():
@@ -68,6 +68,7 @@ class JoyMapper():
         self.camTiltPub = rospy.Publisher("/topower_v1/cam_tilt_position_controller/command",Float64,queue_size=1)
         self.gripperPosPub = rospy.Publisher("/topower_v1/gripper_l_position_controller/command",Float64,queue_size=1)
         self.armJoyCmdPub = rospy.Publisher("arm_joy_cmd",ArmJoyCmd,queue_size=1)
+        self.camSavePub = rospy.Publisher("/topower_v1/camera/capture",Empty,queue_size=1)
 
     def JoyCallback(self,msg):
         if self.mode == "car":
@@ -86,6 +87,9 @@ class JoyMapper():
                 self.curTilt = 0
             if msg.buttons[self.btX] == 1:
                 self.mode = "arm"
+                rospy.loginfo("change to arm mode")
+            if msg.buttons[self.btA == 1]:  #trigger image save
+                self.camSavePub.publish()
 
         elif self.mode == "arm":
             self.armBaseOffset = msg.axes[self.dirX]
@@ -112,6 +116,7 @@ class JoyMapper():
 
             if msg.buttons[self.btX] == 1:
                 self.mode = "car"
+                rospy.loginfo("change to car mode")
         
 
     def Update(self):
