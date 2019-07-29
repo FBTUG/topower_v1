@@ -36,6 +36,7 @@
   </node>
   <node name="cam_capture_node" pkg="topower_v1" type="cam_capture_node.py" output="screen">
       <param name="camID" value="0" />
+      <param name="flipH" value="true" />
   </node>
   <node name="car_control_node" pkg="topower_v1" type="car_control_node.py" output="screen">
       <param name="leftRatio" value="1" />

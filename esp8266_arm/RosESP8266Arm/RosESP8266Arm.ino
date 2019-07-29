@@ -6,7 +6,7 @@
 
 const char* ssid = "aga-mobile";
 const char* password = "aga-wifi";
-IPAddress server(192,168,43,237);
+IPAddress server(192,168,43,80);
 const uint16_t serverPort = 11411;
 
 
