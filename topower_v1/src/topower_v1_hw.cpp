@@ -1,6 +1,8 @@
 #include <hardware_interface/joint_command_interface.h>
 #include <hardware_interface/joint_state_interface.h>
 #include <hardware_interface/robot_hw.h>
+#include <joint_limits_interface/joint_limits_interface.h>
+#include <joint_limits_interface/joint_limits_rosparam.h>
 #include <controller_manager/controller_manager.h>
 #include "topower_v1/ArmPose.h"
 #include "topower_v1/CamPanTilt.h"
@@ -45,6 +47,15 @@ class ToPowerV1HW : public hardware_interface::RobotHW{
             for(int i=0;i<JOINT_NUM;i++){
                 hardware_interface::JointHandle posHandle(m_JointStateInterface.getHandle(joint[i]), &m_JointCmd[i]);
                 m_PositionJointInterface.registerHandle(posHandle);
+
+                joint_limits_interface::JointLimits limits;
+                joint_limits_interface::SoftJointLimits softLimits;
+                if (getJointLimits(joint[i], m_NH, limits) == false) {
+                    ROS_ERROR_STREAM("Cannot set joint limits for " << joint[i]);
+                } else {
+                    joint_limits_interface::PositionJointSoftLimitsHandle jointLimitsHandle(posHandle, limits, softLimits);
+                    m_PositionJointLimitInterface.registerHandle(jointLimitsHandle);
+                }
             }
 
             //effort controller: wheel
@@ -54,7 +65,7 @@ class ToPowerV1HW : public hardware_interface::RobotHW{
                 hardware_interface::JointStateHandle stateHandle(wheel[i], &m_WheelPose[i], &m_WheelVel[i], &m_WheelEff[i]);
                 m_JointStateInterface.registerHandle(stateHandle);
             }
-            //position
+            //effort
             for(int i=0;i<WHEEL_NUM;i++){
                 hardware_interface::JointHandle effortHandle(m_JointStateInterface.getHandle(wheel[i]), &m_WheelCmd[i]);
                 m_EffortJointInterface.registerHandle(effortHandle);
@@ -63,6 +74,7 @@ class ToPowerV1HW : public hardware_interface::RobotHW{
             registerInterface(&m_JointStateInterface);
             registerInterface(&m_PositionJointInterface);
             registerInterface(&m_EffortJointInterface);
+            registerInterface(&m_PositionJointLimitInterface);
 
             LoadOffsetScale();
 
@@ -87,6 +99,8 @@ class ToPowerV1HW : public hardware_interface::RobotHW{
         }
 
         void write(const ros::Time& time, const ros::Duration& period){
+            m_PositionJointLimitInterface.enforceLimits(period);
+
             //ROS_INFO("arm cmd: %lf %lf %lf %lf %lf %lf", m_JointCmd[0],m_JointCmd[1],m_JointCmd[2],m_JointCmd[3],m_JointCmd[4],m_JointCmd[5]);
             topower_v1::ArmPose armPose;
             armPose.armBasePos = m_JointCmd[ARM_BASE]/m_JointScale[ARM_BASE]+m_JointOffset[ARM_BASE];
@@ -145,6 +159,7 @@ class ToPowerV1HW : public hardware_interface::RobotHW{
         hardware_interface::JointStateInterface m_JointStateInterface;
         hardware_interface::PositionJointInterface m_PositionJointInterface;
         hardware_interface::EffortJointInterface m_EffortJointInterface;
+        joint_limits_interface::PositionJointSoftLimitsInterface m_PositionJointLimitInterface;
         
         double m_JointCmd[JOINT_NUM];
         double m_JointPose[JOINT_NUM];

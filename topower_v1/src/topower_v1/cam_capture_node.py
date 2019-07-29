@@ -10,8 +10,8 @@ import os
 class CamCapture():
     def __init__(self):
         self.camID = rospy.get_param("~camID",0)
-        self.width = rospy.get_param("~width",320)
-        self.height = rospy.get_param("~height",240)
+        self.width = rospy.get_param("~width",640)
+        self.height = rospy.get_param("~height",480)
         self.rate = rospy.get_param("~rate",30)
         rospy.loginfo("use camera id=%d, w=%d, h=%d, rate=%f" % (self.camID,self.width,self.height,self.rate))
         

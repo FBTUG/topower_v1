@@ -62,7 +62,7 @@ class ArmControl():
             
             #rospy.loginfo(goal)
             self.armAC.send_goal(goal)
-            self.armAC.wait_for_result(timeout=rospy.Duration(1))
+            #self.armAC.wait_for_result(timeout=rospy.Duration(1))
         
 
     def GoToRandomPose(self):
