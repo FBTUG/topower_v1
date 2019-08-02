@@ -15,7 +15,11 @@ find_package(catkin REQUIRED COMPONENTS
   actionlib
   moveit_msgs
   controller_manager
+  roslib
+  cv_bridge
+  image_transport
 )
+find_package( OpenCV REQUIRED )
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -124,6 +128,7 @@ catkin_package(
 include_directories(
 # include
   ${catkin_INCLUDE_DIRS}
+  ${OpenCV_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
@@ -161,6 +166,16 @@ target_link_libraries(topower_v1_hw
   ${catkin_LIBRARIES}
 )
 add_dependencies(topower_v1_hw
+  ${catkin_EXPORTED_TARGETS}
+)
+
+add_executable(yolo_node src/yolo_node.cpp)
+target_link_libraries(yolo_node
+  ${catkin_LIBRARIES}
+  ${OpenCV_LIBRARIES}
+  ${PROJECT_SOURCE_DIR}/libdarknet.so
+)
+add_dependencies(yolo_node
   ${catkin_EXPORTED_TARGETS}
 )
 
