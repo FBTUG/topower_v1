@@ -15,6 +15,7 @@ char** names = NULL;
 int classNum = 0;
 ros::Publisher yoloPub;
 
+//opencv channel: BGR, yolo image channel: RGB
 IplImage *image_to_ipl(image im){
     int x,y,c;
     IplImage *disp = cvCreateImage(cvSize(im.w,im.h), IPL_DEPTH_8U, im.c);
@@ -23,7 +24,7 @@ IplImage *image_to_ipl(image im){
         for(x = 0; x < im.w; ++x){
             for(c= 0; c < im.c; ++c){
                 float val = im.data[c*im.h*im.w + y*im.w + x];
-                disp->imageData[y*step + x*im.c + c] = (unsigned char)(val*255);
+                disp->imageData[y*step + x*im.c + im.c-1-c] = (unsigned char)(val*255);
             }
         }
     }
@@ -42,7 +43,7 @@ image ipl_to_image(IplImage* src){
     for(i = 0; i < h; ++i){
         for(k= 0; k < c; ++k){
             for(j = 0; j < w; ++j){ 
-                im.data[k*w*h + i*w + j] = data[i*step + j*c + k]/255.;
+                im.data[k*w*h + i*w + j] = data[i*step + j*c + c-1-k]/255.;
             }
         }
     }
@@ -99,10 +100,10 @@ int main(int argc, char **argv){
 
     std::string cfgfile, weightfile,namefile,optionfile;
     std::string nodePath = ros::package::getPath("topower_v1");
-    nh.param<std::string>("cfgfile", cfgfile, nodePath+"/src/cfg.fake-tomato/yolov3-tiny.cfg");
-    nh.param<std::string>("weightfile", weightfile, nodePath+"/src/cfg.fake-tomato/yolov3-tiny.weight");
-    nh.param<std::string>("namefile", namefile, nodePath+"/src/cfg.fake-tomato/obj.names");
-    nh.param<std::string>("optionfile", optionfile, nodePath+"/src/cfg.fake-tomato/obj.data");
+    nh.param<std::string>("cfgfile", cfgfile, nodePath+"/config/cfg.fake-tomato/yolov3-tiny.cfg");
+    nh.param<std::string>("weightfile", weightfile, nodePath+"/config/cfg.fake-tomato/yolov3-tiny.weight");
+    nh.param<std::string>("namefile", namefile, nodePath+"/config/cfg.fake-tomato/obj.names");
+    nh.param<std::string>("optionfile", optionfile, nodePath+"/config/cfg.fake-tomato/obj.data");
     
     names = get_labels(const_cast<char*>(namefile.c_str()));
     net = load_network(const_cast<char*>(cfgfile.c_str()), const_cast<char*>(weightfile.c_str()), 0);

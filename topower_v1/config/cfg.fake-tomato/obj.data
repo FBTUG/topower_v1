@@ -1,0 +1,5 @@
+classes= 1
+train  = ../darknet/cfg.fake-tomato/train.txt
+valid  = ../darknet/cfg.fake-tomato/test.txt
+names = ../darknet/cfg.fake-tomato/obj.names
+backup = ../darknet/cfg.fake-tomato/weights/
