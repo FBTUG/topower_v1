@@ -14,6 +14,7 @@ class CamCapture():
         self.height = rospy.get_param("~height",480)
         self.rate = rospy.get_param("~rate",30)
         self.flipH = rospy.get_param("~flipH",False)
+        self.flipV = rospy.get_param("~flipV",False)
         rospy.loginfo("use camera id=%d, w=%d, h=%d, rate=%f" % (self.camID,self.width,self.height,self.rate))
         
         self.cap = cv2.VideoCapture(self.camID)
@@ -39,7 +40,11 @@ class CamCapture():
         rate = rospy.Rate(self.rate)
         while not rospy.is_shutdown():
             ret, self.frame = self.cap.read()
-            if self.flipH:
+            if self.flipH and self.flipV:
+                self.frame = cv2.flip(self.frame,-1)
+            elif self.flipH:
+                self.frame = cv2.flip(self.frame,1)
+            elif self.flipV:
                 self.frame = cv2.flip(self.frame,0)
             msg = self.br.cv2_to_compressed_imgmsg(self.frame)
             self.pub.publish(msg)

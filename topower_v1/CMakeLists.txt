@@ -28,7 +28,7 @@ find_package( OpenCV REQUIRED )
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
 ## See http://ros.org/doc/api/catkin/html/user_guide/setup_dot_py.html
-# catkin_python_setup()
+catkin_python_setup()
 
 ################################################
 ## Declare ROS messages, services and actions ##
@@ -169,13 +169,23 @@ add_dependencies(topower_v1_hw
   ${catkin_EXPORTED_TARGETS}
 )
 
-add_executable(yolo_node src/yolo_node.cpp)
+add_executable(yolo_node src/yolo/yolo_node.cpp)
 target_link_libraries(yolo_node
   ${catkin_LIBRARIES}
   ${OpenCV_LIBRARIES}
-  ${PROJECT_SOURCE_DIR}/libdarknet.so
+  ${PROJECT_SOURCE_DIR}/src/yolo/libdarknet.so
 )
 add_dependencies(yolo_node
+  ${catkin_EXPORTED_TARGETS}
+)
+
+add_executable(apriltag_node src/apriltag/apriltag_node.cpp)
+target_link_libraries(apriltag_node
+  ${catkin_LIBRARIES}
+  ${OpenCV_LIBRARIES}
+  ${PROJECT_SOURCE_DIR}/src/apriltag/libapriltag.so
+)
+add_dependencies(apriltag_node
   ${catkin_EXPORTED_TARGETS}
 )
 
