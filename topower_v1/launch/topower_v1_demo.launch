@@ -43,10 +43,10 @@
       <param name="rightRatio" value="1" />
   </node>
 
-  <node name="yolo_node" pkg="topower_v1" type="yolo_node" output="screen"></node>
+  <!--<node name="yolo_node" pkg="topower_v1" type="yolo_node" output="screen"></node>
 
 
-  <include file="$(find topower_v1)/launch/joy_control.launch"></include>
+  <include file="$(find topower_v1)/launch/joy_control.launch"></include>-->
 
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"
   respawn="false" output="screen">
