@@ -7,28 +7,55 @@ joint_limits:
     max_velocity: 0.9
     has_acceleration_limits: false
     max_acceleration: 0
+    has_position_limits: true
+    max_position: 1.57
+    min_position: -1.57
   joint_arm_b:
     has_velocity_limits: true
     max_velocity: 0.9
     has_acceleration_limits: false
     max_acceleration: 0
+    has_position_limits: true
+    max_position: 1.57
+    min_position: -1.57
   joint_arm_base:
     has_velocity_limits: true
     max_velocity: 0.9
     has_acceleration_limits: false
     max_acceleration: 0
+    has_position_limits: true
+    max_position: 1.57
+    min_position: -1.57
   joint_gripper_base:
     has_velocity_limits: true
     max_velocity: 0.9
     has_acceleration_limits: false
     max_acceleration: 0
+    has_position_limits: true
+    max_position: 1.57
+    min_position: -1.57
   joint_gripper_l:
     has_velocity_limits: true
     max_velocity: 0.9
     has_acceleration_limits: false
     max_acceleration: 0
+    has_position_limits: true
+    max_position: 0
+    min_position: -0.035
   joint_gripper_r:
     has_velocity_limits: true
     max_velocity: 0.9
     has_acceleration_limits: false
     max_acceleration: 0
+  joint_cam_pan:
+    has_velocity_limits: true
+    max_velocity: 0.9
+    has_position_limits: true
+    max_position: 2.1
+    min_position: -2.1
+  joint_cam_tilt:
+    has_velocity_limits: true
+    max_velocity: 0.9
+    has_position_limits: true
+    max_position: 1.57
+    min_position: -1.57

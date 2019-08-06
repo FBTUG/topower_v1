@@ -44,15 +44,20 @@ class ToPowerV1HW : public hardware_interface::RobotHW{
                 m_JointStateInterface.registerHandle(stateHandle);
             }
             //position
+            ros::NodeHandle limitNH("/robot_description_planning");
             for(int i=0;i<JOINT_NUM;i++){
                 hardware_interface::JointHandle posHandle(m_JointStateInterface.getHandle(joint[i]), &m_JointCmd[i]);
                 m_PositionJointInterface.registerHandle(posHandle);
 
                 joint_limits_interface::JointLimits limits;
                 joint_limits_interface::SoftJointLimits softLimits;
-                if (getJointLimits(joint[i], m_NH, limits) == false) {
+                if (getJointLimits(joint[i], limitNH, limits) == false) {
                     ROS_ERROR_STREAM("Cannot set joint limits for " << joint[i]);
                 } else {
+                    ROS_INFO("joint limit %s: %f %f", joint[i], limits.min_position, limits.max_position);
+                    softLimits.k_position = 1;
+                    softLimits.min_position = limits.min_position;
+                    softLimits.max_position = limits.max_position;
                     joint_limits_interface::PositionJointSoftLimitsHandle jointLimitsHandle(posHandle, limits, softLimits);
                     m_PositionJointLimitInterface.registerHandle(jointLimitsHandle);
                 }
@@ -99,9 +104,10 @@ class ToPowerV1HW : public hardware_interface::RobotHW{
         }
 
         void write(const ros::Time& time, const ros::Duration& period){
+            //ROS_INFO("arm cmd: %lf %lf %lf %lf %lf %lf", m_JointCmd[0],m_JointCmd[1],m_JointCmd[2],m_JointCmd[3],m_JointCmd[4],m_JointCmd[5]);
             m_PositionJointLimitInterface.enforceLimits(period);
 
-            //ROS_INFO("arm cmd: %lf %lf %lf %lf %lf %lf", m_JointCmd[0],m_JointCmd[1],m_JointCmd[2],m_JointCmd[3],m_JointCmd[4],m_JointCmd[5]);
+            //ROS_INFO("arm cmd after limit: %lf %lf %lf %lf %lf %lf", m_JointCmd[0],m_JointCmd[1],m_JointCmd[2],m_JointCmd[3],m_JointCmd[4],m_JointCmd[5]);
             topower_v1::ArmPose armPose;
             armPose.armBasePos = m_JointCmd[ARM_BASE]/m_JointScale[ARM_BASE]+m_JointOffset[ARM_BASE];
             armPose.armAPos = m_JointCmd[ARM_A]/m_JointScale[ARM_A]+m_JointOffset[ARM_A];

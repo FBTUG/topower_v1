@@ -6,7 +6,7 @@
 
 const char* ssid = "aga-mobile";
 const char* password = "aga-wifi";
-IPAddress server(192,168,43,80);
+IPAddress server(192,168,43,237);
 const uint16_t serverPort = 11411;
 
 
@@ -63,12 +63,26 @@ void PublishState(){
 }
 
 void MoveArm(){
-  int t = 50;
-  servo.move(ARM_BASE, armPoseCmd.armBasePos, t);
-  servo.move(ARM_A, armPoseCmd.armAPos, t);
-  servo.move(ARM_B, armPoseCmd.armBPos, t);
-  servo.move(GRIPPER_BASE, armPoseCmd.gripperBasePos, t);
-  servo.move(GRIPPER, armPoseCmd.gripperPos, t);
+  //compute move speed
+  int armBaseDiff = abs(armPoseCmd.armBasePos-armPoseState.armBasePos);
+  int armADiff = abs(armPoseCmd.armAPos-armPoseState.armAPos);
+  int armBDiff = abs(armPoseCmd.armBPos-armPoseState.armBPos);
+  int gripperBaseDiff = abs(armPoseCmd.gripperBasePos-armPoseState.gripperBasePos);
+  int gripperDiff = abs(armPoseCmd.gripperPos-armPoseState.gripperPos);
+  //set speed thresh to reduce jitter
+  int minThresh = 30;
+  if(armBaseDiff < minThresh) armBaseDiff = minThresh;
+  if(armADiff < minThresh) armADiff = minThresh;
+  if(armBDiff < minThresh) armBDiff = minThresh;
+  if(gripperBaseDiff < minThresh) gripperBaseDiff = minThresh;
+  if(gripperDiff < minThresh) gripperDiff = minThresh;
+  
+  //move arm
+  servo.move(ARM_BASE, armPoseCmd.armBasePos, armBaseDiff);
+  servo.move(ARM_A, armPoseCmd.armAPos, armADiff);
+  servo.move(ARM_B, armPoseCmd.armBPos, armBDiff);
+  servo.move(GRIPPER_BASE, armPoseCmd.gripperBasePos, gripperBaseDiff);
+  servo.move(GRIPPER, armPoseCmd.gripperPos, gripperDiff);
 }
 
 void setup()
