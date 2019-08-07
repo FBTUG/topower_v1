@@ -32,12 +32,39 @@ PC端連接搖桿控制車子與手臂，並取得camera影像做假蕃茄和apr
 4. 安裝需要的ros package
 	- sudo apt-get install ros-melodic-moveit ros-melodic-rosserial-arduino ros-melodic-rosserial ros-melodic-joy ros-melodic-ros-control ros-melodic-ros-controllers ros-melodic-cv-bridge ros-melodic-vision-opencv
 5. 在ros working space資料夾執行catkin_make編譯程式
+6. 在ros working space資料夾執行source devel/setup.bash更新ros狀態
 
 #### arduino
+1. 使用ROS產生自定義的message並複製到arduino放lib的資料夾
+2. 將arduino/RosArduinoMotorControl內的程式透過arduino IDE燒進arduino uno板。
 
 #### 手臂(esp8266)
+1. 使用ROS產生自定義的message並複製到arduino放lib的資料夾
+2. 手臂控制板esp8266可用arduino IDE燒入程式，但需先安裝相關檔案。安裝方式可參考[這裡](http://yhhuang1966.blogspot.com/2017/09/arduino-ide-esp8266.html)
+3. 將esp8266_arm/RosESP8266HelloWorld內的程式透過arduino IDE燒進esp8266板。
 
 ### 使用
+#### 可透過topower_v1/launch資料夾中的launch檔執行程式
+- joy_control.launch 搖桿控制功能
+- topower_v1_demo.launch 實體機器控制主程式，包含手臂、車子、相機之間的控制與溝通
+- topower_v1_gazebo.launch 開啟gazebo做土砲1號模擬控制
+- topower_v1_remote.launch pc端遠端操控實體機器，包含搖桿控制、yolo物件偵測、apriltag偵測
+- topower_v1_rviz.launch 開啟rviz將目前狀態做視覺化顯示
+
+\* 如果是用ssh連入機器，因為沒有視窗界面，gazebo跟rviz都無法開啟。
+
+\* 在raspberry pi上跑gazebo雖然可以開，但可能因為記憶體不足打開之後會整個當掉。
+
+#### 遠端控
+在ROS中若要做到兩台機器間互相溝通，兩台機器需在同一個內網下(除非你有固定對外的IP)，並且設定ROS_MASTER_URI和ROS_IP(或ROS_HOSTNAME，跟ROS_IP二擇一)
+
+設定指令：
+- export ROS_MASTER_URI=http://\{執行roscore的機器IP或hostname\}:11311
+- export ROS_IP=\{這台機器的IP\} 或
+- export ROS_HOSTNAME=\{這台機器的hostname\}
+- 若是使用hostname，需在/etc/hosts中寫入ip跟hostname的對應關係
+
+在我自己的實體機器實驗中，把前面所有東西設定好後，我會ssh進raspberry pi執行start_demo.sh(裡面會跑topower_v1_demo.launch)，然後在pc中執行topower_v1_remote.launch做遠端操控跟影像辨識。最後打開rqt觀看影像處理結果。
 
 ### 資料夾結構
 
