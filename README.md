@@ -74,12 +74,14 @@ PC端連接搖桿控制車子與手臂，並取得camera影像做假蕃茄和apr
 #### 執行結果
 搖桿控制包含車體控制跟手臂控制兩種模式，按鈕依羅技F310搖桿設定。如果使用不同搖桿，可進joy_control.launch調整。
 ##### 車體控制
-![搖桿車體控制模式](https://drive.google.com/uc?export=view&id=1HfVIBZ2kwA47HNGRp8XIjvfDlH4if1nv"搖桿車體控制模式")
+<img src="https://github.com/aga3134/topower_v1/blob/master/%E8%BB%8A%E9%AB%94%E6%93%8D%E6%8E%A7.jpg?raw=true" width="480px">
+
 ##### ros 車體遙控測試
 [![ros 車體遙控測試](https://img.youtube.com/vi/kWfkIq2DYRM/0.jpg)](https://www.youtube.com/watch?v=kWfkIq2DYRM)
 
 ##### 手臂控制
-![搖桿手臂控制模式](https://drive.google.com/uc?export=view&id=1WpnCwR1rX6fy93OPeSZUwIaS3Ap6s6w9"搖桿手臂控制模式")
+<img src="https://github.com/aga3134/topower_v1/blob/master/%E6%89%8B%E8%87%82%E6%93%8D%E6%8E%A7.jpg?raw=true" width="480px">
+
 ##### ros moveit 手臂測試
 [![ros moveit 手臂測試](https://img.youtube.com/vi/ItZ9fYsNWAc/0.jpg)](https://www.youtube.com/watch?v=ItZ9fYsNWAc)
 
