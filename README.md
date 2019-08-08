@@ -1,5 +1,7 @@
 # topower_v1
 ## 土砲1號
+<img src="https://github.com/aga3134/topower_v1/blob/master/P_20190808_105344.jpg?raw=true?raw=true" width="480px">
+
 ### 目的
 本專案目的在提供簡單的範例以ROS架構整合載具驅動、視覺偵測、手臂驅動、搖桿控制，不包含3D定位、SLAM、自動控制的部份。
 整合項目包括：
@@ -87,15 +89,65 @@ PC端連接搖桿控制車子與手臂，並取得camera影像做假蕃茄和apr
 
 ##### ROS接yolov3_tiny假蕃茄測試
 在rqt中打開image view plugin，並把topic設成/topower_v1/camera/yolo_result/compressed
+
 [![ROS接yolov3_tiny假蕃茄測試](https://img.youtube.com/vi/KiRTkXGwmpo/0.jpg)](https://www.youtube.com/watch?v=KiRTkXGwmpo)
 
 ##### ros接apriltag測試
 在rqt中打開image view plugin，並把topic設成/topower_v1/camera/apriltag/compressed
+
 [![ros接apriltag測試](https://img.youtube.com/vi/0ZxaFdWtulE/0.jpg)](https://www.youtube.com/watch?v=0ZxaFdWtulE)
 
 ### 資料夾結構
+- arduino: 放arduino車體控制程式
+	- RosArduinoHelloWorld: arduino跟ros溝通的簡單範例
+	- RosArduinoMotorControl: arduino控制車體的程式
+- esp8266_arm: 放esp8266手臂控制程式
+	- RosESP8266Arm: esp8266手臂控制程式
+	- RosESP8266HelloWorld: esp8266跟ros溝通的簡單範例
+- topower_v1: ros主程式的package
+	- config: 放參數檔
+		- cfg.fake-tomato: yolo參數設定，使用yolov3-tiny訓練假蕃茄模型
+		- topower_v1_control.yaml: ros control參數設定
+		- topower_v1_moveit.rviz: rviz設定for moveit測試
+		- topower_v1_rviz.rviz: rviz設定for urdf debug
+	- launch: 放launch檔
+		- joy_control.launch: 搖桿控制
+		- topower_v1_demo.launch: 實體機器控制
+		- topower_v1_gazebo.launch: gazebo模擬
+		- topower_v1_remote.launch: 遠端控制
+		- topower_v1_rviz.launch: 開啟rviz做urdf debug
+	- msg:  放message定
+		- ArmJoyCmd.msg: 搖桿傳給moveit控制手臂的訊號
+		- ArmPose.msg: 傳給esp8266手臂的訊號
+		- CamPanTilt.msg: 控制相機轉動的訊號
+		- WheelDrive.msg: 控制車子移動的訊號
+	- robot_model: 放土砲1號的urdf定義
+		- 最上層的定義是topower_v1.xacro，裡面會將其他xacro檔叫進來
+		- topower_v1_arm.urdf.xacro、topower_v1_pan_tilt_cam.urdf.xacro、topower_v1_vehicle.urdf.xacro分別定義手臂、相機、車體機構
+		- topower_v1_common.xacro定義給其他xacro共用的元素
+		- topower_v1.gazebo定義給gazebo看的參數
+		- materials.xacro定義在rviz顯示的顏色
+	- src: 放主程式
+		- apriltag: 偵測apriltag的程式
+		- topower_v1: 主要控制程式
+			- arm_control_node.py: 手臂控制程式
+			- cam_capture_node.py: 相機取像程式
+			- car_control_node.py: 車體控制程式
+			- joy_mapper_node.py: 搖桿控制程式
+		- yolo: 偵測假蕃茄的程式
+		- topower_v1_hw.cpp: 定義土炮1號的hardware interface，跟實體機器溝通
+	- worlds: 放gazebo場景 
+- topower_v1_moveit: 由moveit setup assistant產生的package
 
 ### 硬體資料
+- [BOM](https://docs.google.com/spreadsheets/d/1zkPduSW5lWat-D1qk9nLzZ4ZvrCBr-DHGEX5C0q9JmQ/edit?usp=sharing)
+
+### 已知問題
+- raspberry pi上執行yolov3-tiny跑不起來，可能是記憶體不足，網路上有[範例](http://raspberrypi4u.blogspot.com/2018/10/raspberry-pi-yolo-real-time-object.html)是跑yolov2-tiny，但是很慢。之後需搭配[NCS2](https://www.mouser.tw/new/Intel/intel-neural-compute-stick-2/)或改用[jetson nano](https://www.nvidia.com/zh-tw/autonomous-machines/embedded-systems/jetson-nano/)
+- 手臂使用的串列馬達雖然可以設定移動速度，但是使用搖桿控制因為會連續一直傳位置給手臂，速度調快動作會頓、調慢則會lag；如果是直接給一個目標位置一次移動到位則不會有這個問題。
+- moveit預設的ik solver對目前使用的手臂容易算不出角度，要實用的話需自己寫轉換或試用其他ik solver
+- 車子跑一跑輪子容易掉下來
+- apriltag看起來很穩定，但是有部分遮蔽就會抓不到。如果農場植物會長得很雜亂可能不適用。
 
 ### 特別感謝
 - 感謝哈爸超佛心[ros共筆](https://paper.dropbox.com/doc/FBTUG-FarmHarvestBot--AL0ocC8x8bX6TSHoopuJMw0NAg-w2FKkhc4ZTlj6knhOK43p)
