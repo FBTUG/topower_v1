@@ -140,6 +140,18 @@ PC端連接搖桿控制車子與手臂，並取得camera影像做假蕃茄和apr
 - topower_v1_moveit: 由moveit setup assistant產生的package
 
 ### 硬體資料
+<img src="https://github.com/aga3134/topower_v1/blob/master/P_20190809_101116.jpg?raw=true" width="480">
+
+- arduino digital out
+	- 左輪前進: pin 11
+	- 左輪後退: pin 10
+	- 右輪前進: pin 6
+	- 右輪後退: pin 9
+	- 相機左右轉: pin 3
+	- 相機上下轉: pin 5
+- 所有pin輸出皆需PWM功能，程式使用SoftPWM函式庫，選哪個pin輸出應該都ok
+- 相機轉動的伺服馬達直接吃arduino輸出的5v電源
+- 雙輪馬達驅動時的突波會影響伺服馬達位置，所以雙輪馬達另外從USB行動電源獨立供電
 - [BOM](https://docs.google.com/spreadsheets/d/1zkPduSW5lWat-D1qk9nLzZ4ZvrCBr-DHGEX5C0q9JmQ/edit?usp=sharing)
 
 ### 已知問題
