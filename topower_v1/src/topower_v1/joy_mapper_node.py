@@ -98,11 +98,9 @@ class JoyMapper():
             self.armBOffset = msg.axes[self.rightStickY]
 
             if msg.buttons[self.btA] == 1:
-                self.gripperPosOffset = -1
+                self.curGripperPos = self.gripperMin
             elif msg.buttons[self.btB] == 1:
-                self.gripperPosOffset = 1
-            else:
-                self.gripperPosOffset = 0
+                self.curGripperPos = self.gripperMax
             
             if msg.buttons[self.btY] == 1:
                 cmd = ArmJoyCmd()
@@ -145,11 +143,6 @@ class JoyMapper():
         cmd.randomPose = False
         self.armJoyCmdPub.publish(cmd)
 
-        self.curGripperPos += self.gripperPosOffset
-        if self.curGripperPos < self.gripperPosMin:
-            self.curGripperPos = self.gripperPosMin
-        elif self.curGripperPos > self.gripperPosMax:
-            self.curGripperPos = self.gripperPosMax
         self.gripperPosPub.publish(self.curGripperPos)
 
 
