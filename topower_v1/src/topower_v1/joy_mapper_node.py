@@ -21,9 +21,6 @@ class JoyMapper():
         self.randomPose = False
         self.mode = "car"
 
-        self.curGripperPos = 0
-        self.gripperPosOffset = 0
-
         self.updateRate = rospy.get_param("~updateRate",30)
 
         self.panMin = rospy.get_param("~panMin",-2*math.pi/3)
@@ -32,17 +29,6 @@ class JoyMapper():
         self.tiltMax = rospy.get_param("~tiltMax",0.5*math.pi)
         self.gripperPosMin = rospy.get_param("~gripperPosMin",-0.035)
         self.gripperPosMax = rospy.get_param("~gripperPosMax",0)
-
-        self.armBaseMin = rospy.get_param("~armBaseMin",0)
-        self.armBaseMax = rospy.get_param("~armBaseMax",180)
-        self.armAMin = rospy.get_param("~armAMin",0)
-        self.armAMax = rospy.get_param("~armAMax",180)
-        self.armBMin = rospy.get_param("~armBMin",0)
-        self.armBMax = rospy.get_param("~armBMax",180)
-        self.gripperBaseMin = rospy.get_param("~gripperBaseMin",0)
-        self.gripperBaseMax = rospy.get_param("~gripperBaseMax",180)
-        self.gripperMin = rospy.get_param("~gripperMin",0)
-        self.gripperMax = rospy.get_param("~gripperMax",120)
 
         self.leftStickX = rospy.get_param("~leftStickX",0)
         self.leftStickY = rospy.get_param("~leftStickY",1)
@@ -98,9 +84,9 @@ class JoyMapper():
             self.armBOffset = msg.axes[self.rightStickY]
 
             if msg.buttons[self.btA] == 1:
-                self.curGripperPos = self.gripperMin
+                self.gripperPosPub.publish(self.gripperPosMin)
             elif msg.buttons[self.btB] == 1:
-                self.curGripperPos = self.gripperMax
+                self.gripperPosPub.publish(self.gripperPosMax)
             
             if msg.buttons[self.btY] == 1:
                 cmd = ArmJoyCmd()
@@ -143,7 +129,6 @@ class JoyMapper():
         cmd.randomPose = False
         self.armJoyCmdPub.publish(cmd)
 
-        self.gripperPosPub.publish(self.curGripperPos)
 
 
     def Run(self):

@@ -41,6 +41,6 @@ gripper_controller:
   gains:
     joint_gripper_l:
       p: 100
-      d: 1
-      i: 1
+      d: 0
+      i: 0
       i_clamp: 1

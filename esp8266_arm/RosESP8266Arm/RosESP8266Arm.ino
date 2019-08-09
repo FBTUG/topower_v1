@@ -82,7 +82,7 @@ void MoveArm(){
   servo.move(ARM_A, armPoseCmd.armAPos, armADiff);
   servo.move(ARM_B, armPoseCmd.armBPos, armBDiff);
   servo.move(GRIPPER_BASE, armPoseCmd.gripperBasePos, gripperBaseDiff);
-  servo.move(GRIPPER, armPoseCmd.gripperPos, gripperDiff);
+  servo.move(GRIPPER, armPoseCmd.gripperPos, 10);
 }
 
 void setup()
