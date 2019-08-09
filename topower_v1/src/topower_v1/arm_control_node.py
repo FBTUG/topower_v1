@@ -91,7 +91,8 @@ class ArmControl():
     def GoToStandbyPose(self):
         rospy.loginfo("======go to standby pose")
         joint_goal = self.armGroup.get_named_target_values("standby")
-        self.jointState = copy(joint_goal)
+        #rospy.loginfo(joint_goal)
+        self.jointState = [joint_goal["joint_arm_base"],joint_goal["joint_arm_a"],joint_goal["joint_arm_b"],joint_goal["joint_gripper_base"]]
         self.armGroup.go(joint_goal, wait=True)
         self.armGroup.stop()
 
