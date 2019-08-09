@@ -164,6 +164,7 @@ PC端連接搖桿控制車子與手臂，並取得camera影像做假蕃茄和apr
 - 車子跑一跑輪子容易掉下來
 - apriltag看起來很穩定，但是有部分遮蔽就會抓不到。如果農場植物會長得很雜亂可能不適用
 - 截取相機照片如果有開啟上下或左右flip，有時會取到顛倒的畫面
+- 夾爪打開或關閉時會抖，有時還會在沒訊號控制的時候自己動
 
 ### 特別感謝
 - 感謝哈爸借[霹靂車](https://www.icshop.com.tw/product_info.php/products_id/26775)給我參考和超佛心[ros共筆](https://paper.dropbox.com/doc/FBTUG-FarmHarvestBot--AL0ocC8x8bX6TSHoopuJMw0NAg-w2FKkhc4ZTlj6knhOK43p)
