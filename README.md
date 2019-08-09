@@ -3,10 +3,10 @@
 <img src="https://github.com/aga3134/topower_v1/blob/master/P_20190808_105344.jpg?raw=true?raw=true" width="480px">
 
 ### 目的
-本專案目的在提供簡單的範例以ROS架構整合載具驅動、視覺偵測、手臂驅動、搖桿控制，不包含3D定位、SLAM、自動控制的部份。
+本專案目的在提供簡單的範例以ROS架構整合載具驅動、視覺偵測、手臂驅動、搖桿控制，**不包含**3D定位、SLAM、自動控制的部份。
 整合項目包括：
 - raspberry pi ros 主程式
-- rosserial arduino馬達驅動(含雙輪驅動與相機旋轉)
+- rosserial arduino馬達驅動(含雙輪驅動與相機轉動)
 - rosserial tcp esp8266手臂驅動
 - urdf建模與gazebo模擬
 - ros control 馬達驅動
@@ -60,10 +60,10 @@ PC端連接搖桿控制車子與手臂，並取得camera影像做假蕃茄和apr
 
 \* 如果是用ssh連入機器，因為沒有視窗界面，gazebo跟rviz都無法開啟。
 
-\* 在raspberry pi上跑gazebo雖然可以開，但可能因為記憶體不足打開之後會整個當掉。
+\* 在raspberry pi上跑gazebo雖然可以開，但可能因為記憶體不足，打開之後會整個當掉。
 
 #### 遠端搖控
-在ROS中若要做到兩台機器間互相溝通，兩台機器需在同一個內網下(除非你有固定對外的IP)，並且設定ROS_MASTER_URI和ROS_IP(或ROS_HOSTNAME，跟ROS_IP二擇一)
+在ROS中若要做到兩台機器間互相溝通，兩台**機器需在同一個內網**下(除非你有固定對外的IP)，並且設定**ROS_MASTER_URI和ROS_IP**(或ROS_HOSTNAME，跟ROS_IP二擇一)
 
 設定指令：
 - export ROS_MASTER_URI=http://\{執行roscore的機器IP或hostname\}:11311
@@ -75,6 +75,7 @@ PC端連接搖桿控制車子與手臂，並取得camera影像做假蕃茄和apr
 
 #### 執行結果
 搖桿控制包含車體控制跟手臂控制兩種模式，按鈕依羅技F310搖桿設定。如果使用不同搖桿，可進joy_control.launch調整。
+
 ##### 車體控制
 <img src="https://github.com/aga3134/topower_v1/blob/master/%E8%BB%8A%E9%AB%94%E6%93%8D%E6%8E%A7.jpg?raw=true" width="480px">
 
@@ -152,6 +153,8 @@ PC端連接搖桿控制車子與手臂，並取得camera影像做假蕃茄和apr
 - 所有pin輸出皆需PWM功能，程式使用SoftPWM函式庫，選哪個pin輸出應該都ok
 - 相機轉動的伺服馬達直接吃arduino輸出的5v電源
 - 雙輪馬達驅動時的突波會影響伺服馬達位置，所以雙輪馬達另外從USB行動電源獨立供電
+- 萬向輪固定用兩個螺帽上下夾緊，方便調整車體水平
+	- <img src="https://github.com/aga3134/topower_v1/blob/master/P_20190809_103450.jpg?raw=true" width="360">
 - [BOM](https://docs.google.com/spreadsheets/d/1zkPduSW5lWat-D1qk9nLzZ4ZvrCBr-DHGEX5C0q9JmQ/edit?usp=sharing)
 
 ### 已知問題
@@ -159,9 +162,10 @@ PC端連接搖桿控制車子與手臂，並取得camera影像做假蕃茄和apr
 - 手臂使用的串列馬達雖然可以設定移動速度，但是使用搖桿控制因為會連續一直傳位置給手臂，速度調快動作會頓、調慢則會lag；如果是直接給一個目標位置一次移動到位則不會有這個問題。
 - moveit預設的ik solver對目前使用的手臂容易算不出角度，要實用的話需自己寫轉換或試用其他ik solver
 - 車子跑一跑輪子容易掉下來
-- apriltag看起來很穩定，但是有部分遮蔽就會抓不到。如果農場植物會長得很雜亂可能不適用。
+- apriltag看起來很穩定，但是有部分遮蔽就會抓不到。如果農場植物會長得很雜亂可能不適用
+- 截取相機照片如果有開啟上下或左右flip，有時會取到顛倒的畫面
 
 ### 特別感謝
-- 感謝哈爸超佛心[ros共筆](https://paper.dropbox.com/doc/FBTUG-FarmHarvestBot--AL0ocC8x8bX6TSHoopuJMw0NAg-w2FKkhc4ZTlj6knhOK43p)
-- 感謝CH大超佛心[機器學習心得](https://chtseng.wordpress.com/category/%e5%bf%83%e5%be%97-%e6%a9%9f%e5%99%a8%e5%ad%b8%e7%bf%92/)
+- 感謝哈爸借[霹靂車](https://www.icshop.com.tw/product_info.php/products_id/26775)給我參考和超佛心[ros共筆](https://paper.dropbox.com/doc/FBTUG-FarmHarvestBot--AL0ocC8x8bX6TSHoopuJMw0NAg-w2FKkhc4ZTlj6knhOK43p)
+- 感謝CH大提供技術咨詢和超佛心[機器學習心得](https://chtseng.wordpress.com/category/%e5%bf%83%e5%be%97-%e6%a9%9f%e5%99%a8%e5%ad%b8%e7%bf%92/)
 - 感謝eric提供機械手臂、[手臂文件](https://github.com/ericyangs/5dof_arm)與假蕃茄模型
